@@ -38,18 +38,25 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
       active: segments.length === 0 || segments.includes('c'),
       label: 'Home',
     },
-    {
-      icon: Search,
-      href: '/discover',
-      active: segments.includes('discover'),
-      label: 'Discover',
-    },
-    {
-      icon: BookOpenText,
-      href: '/library',
-      active: segments.includes('library'),
-      label: 'Library',
-    },
+    /* Discover and Library are omitted from the hosted build: it ships a
+       reduced set of pages to stay inside the deployment's function budget,
+       and a link that leads to a 404 is worse than no link. */
+    ...(process.env.NEXT_PUBLIC_HOSTED === '1'
+      ? []
+      : [
+          {
+            icon: Search,
+            href: '/discover',
+            active: segments.includes('discover'),
+            label: 'Discover',
+          },
+          {
+            icon: BookOpenText,
+            href: '/library',
+            active: segments.includes('library'),
+            label: 'Library',
+          },
+        ]),
     {
       icon: Code2,
       href: '/canvas',

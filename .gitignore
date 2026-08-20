@@ -53,3 +53,9 @@ tsconfig.tsbuildinfo
 /.env.local
 .env.local
 .vercel
+
+# config.json holds every API key the app has been given, in plaintext. The
+# top-level one is covered by data/.gitignore, but a copy can end up nested
+# under any build or scratch directory — this covers all of them, at any depth.
+**/data/config.json
+**/data/db.sqlite

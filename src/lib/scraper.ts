@@ -1,5 +1,3 @@
-import { JSDOM } from 'jsdom';
-import { Readability } from '@mozilla/readability';
 import { Mutex } from 'async-mutex';
 
 class Scraper {
@@ -78,6 +76,16 @@ class Scraper {
       await page.waitForTimeout(500);
 
       const html = await page.content();
+
+      /* Loaded on demand, the same way playwright is above. A static import
+         would pull jsdom into every module that can reach this file — which
+         includes the chat route — and jsdom fails to load outright in some
+         Node runtimes, taking the whole route down before it runs a line.
+         Required lazily, a scraping-only dependency can only break scraping. */
+      const [{ JSDOM }, { Readability }] = await Promise.all([
+        import('jsdom'),
+        import('@mozilla/readability'),
+      ]);
 
       const dom = new JSDOM(html, {
         url,

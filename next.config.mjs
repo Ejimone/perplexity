@@ -3,7 +3,13 @@ import pkg from './package.json' with { type: 'json' };
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  /* The desktop shell runs .next/standalone/server.js as a child process, so
+     it needs the standalone bundle. Vercel does not — it builds its own
+     serverless output, and Next's own docs say standalone is unnecessary
+     there. Leaving it on makes Vercel emit a function per traced entry
+     instead of one per route, which blows past the plan's function limit even
+     though the route table is small. */
+  output: process.env.VERCEL ? undefined : 'standalone',
   images: {
     remotePatterns: [
       {
@@ -16,6 +22,10 @@ const nextConfig = {
     'playwright',
     'officeparser',
     'file-type',
+    /* Bundling jsdom rewrites its internals enough that one of its transitive
+       dependencies ends up require()-ing an ES module, which throws at import
+       time. Left external, it loads as the published package and works. */
+    'jsdom',
   ],
   outputFileTracingIncludes: {
     '/api/**': [

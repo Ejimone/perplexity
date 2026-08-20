@@ -27,26 +27,13 @@ type AskParams = {
  * not the edge case, and the fallback has to be a real resolution rather than
  * an error — the same shape useChat uses when its stored choice no longer
  * resolves. */
-const resolveChatModel = async () => {
+const resolveChatModel = () => {
+  /* The desktop app stores the user's pick here. A hosted deploy has neither
+     the picker nor a surviving localStorage, so returning undefined is normal
+     and the server chooses instead. */
   const key = localStorage.getItem('chatModelKey');
   const providerId = localStorage.getItem('chatModelProviderId');
-  if (key && providerId) return { key, providerId };
-
-  const res = await fetch('/api/providers');
-  if (!res.ok) throw new Error('Could not reach the model providers.');
-
-  const data = await res.json();
-  const provider = (data.providers ?? []).find(
-    (p: any) => p.chatModels?.length > 0,
-  );
-
-  if (!provider) {
-    throw new Error(
-      'No chat model is configured. Add one in Settings, then try again.',
-    );
-  }
-
-  return { key: provider.chatModels[0].key, providerId: provider.id };
+  return key && providerId ? { key, providerId } : undefined;
 };
 
 const useAssist = () => {
@@ -80,7 +67,7 @@ const useAssist = () => {
       abortRef.current = controller;
 
       try {
-        const chatModel = await resolveChatModel();
+        const chatModel = resolveChatModel();
 
         const res = await fetch('/api/canvas/assist', {
           method: 'POST',

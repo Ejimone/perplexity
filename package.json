@@ -3,6 +3,9 @@
   "productName": "Simplicity",
   "version": "1.12.2",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
   "author": "ItzCrazyKns",
   "main": "desktop/main.mjs",
   "scripts": {

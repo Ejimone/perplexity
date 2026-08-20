@@ -34,6 +34,14 @@ const useSandbox = () => {
   const [running, setRunning] = useState(false);
   const [bootMessage, setBootMessage] = useState<string | null>(null);
 
+  /* Which frames have loaded and installed their message listener.
+     Posting into a frame that has not got there yet drops the message on the
+     floor with no error — the run simply never starts. That is invisible on a
+     warm local server and very visible on a cold hosted one, where the frame
+     document can still be in flight when the user hits Run. */
+  const ready = useRef<Set<SandboxRuntime>>(new Set());
+  const queued = useRef<Map<SandboxRuntime, () => void>>(new Map());
+
   /* The in-flight run. Held in a ref because the window message listener is
      registered once and must always see the current run, not the one captured
      when it was attached. */
@@ -64,6 +72,16 @@ const useSandbox = () => {
 
       const message = event.data as SandboxMessage;
       if (!message || typeof message.type !== 'string') return;
+
+      if (message.type === 'ready') {
+        ready.current.add(source);
+        const pending = queued.current.get(source);
+        if (pending) {
+          queued.current.delete(source);
+          pending();
+        }
+        return;
+      }
 
       if (message.type === 'boot') {
         if (run?.runtime === source) {
@@ -185,10 +203,16 @@ const useSandbox = () => {
         /* '*' is required: an opaque-origin frame has no addressable origin to
            target. The frame authenticates us instead, by checking that the
            message came from its own parent at the app's origin. */
-        frame.contentWindow!.postMessage(
-          { type: 'run', lang: runtime, code, timeoutMs },
-          '*',
-        );
+        const send = () =>
+          frame.contentWindow?.postMessage(
+            { type: 'run', lang: runtime, code, timeoutMs },
+            '*',
+          );
+
+        /* Held until the frame says it is listening. The watchdog above still
+           covers a frame that never loads at all. */
+        if (ready.current.has(runtime)) send();
+        else queued.current.set(runtime, send);
       });
     },
     [],

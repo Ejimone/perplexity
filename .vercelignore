@@ -26,38 +26,40 @@ certificates
 public/pyodide
 
 # ---------------------------------------------------------------------------
-# Canvas-only deployment.
+# Function budget.
 #
-# Vercel's Hobby plan allows 12 serverless functions; the full app builds ~28.
-# More importantly, the chat and search surfaces cannot work on a serverless
-# host at all — they need the local SearXNG metasearch, a headless browser for
-# page reading, and a database file that survives between requests. Shipping
-# them would only produce buttons that fail.
+# Vercel bills TWO serverless functions per route (the route plus its RSC
+# payload) and the Hobby plan allows twelve — so the hosted build gets six
+# routes in total, one of which Next spends on /_not-found automatically.
 #
-# Excluding the source here keeps them out of the hosted build without
-# changing the repository: the desktop app still builds all of it.
+# Every API endpoint is therefore served by the single catch-all at
+# src/app/api/[...path]/route.ts. The specific route files below are now thin
+# re-exports of src/lib/api/*, so dropping them here costs no behaviour: the
+# catch-all imports the same implementations. The desktop build keeps them and
+# is unaffected.
 # ---------------------------------------------------------------------------
-
-# Pages that need the local engine
-src/app/page.tsx
-src/app/c
-src/app/discover
-src/app/library
-
-# API routes that need the local engine, a real database, or a browser
+src/app/api/canvas/assist
+src/app/api/canvas/buffers
+src/app/api/canvas/sandbox
+src/app/api/canvas/surface
 src/app/api/chat
 src/app/api/chats
+src/app/api/config
 src/app/api/discover
 src/app/api/images
 src/app/api/local-runtime
+src/app/api/providers
 src/app/api/reconnect
 src/app/api/search
 src/app/api/suggestions
 src/app/api/uploads
 src/app/api/videos
 src/app/api/weather
-src/app/api/config/setup-complete
-# Brackets are a character class in gitignore syntax, so a literal [id]
-# directory has to be escaped — without the backslashes this line silently
-# matched nothing and the routes kept shipping.
-src/app/api/providers/\[id\]
+
+# Pages that need the local search engine, plus the two Next turns into an
+# extra pair of functions each.
+src/app/c
+src/app/discover
+src/app/library
+src/app/manifest.ts
+src/app/favicon.ico
