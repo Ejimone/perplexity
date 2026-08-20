@@ -1,0 +1,51 @@
+# SearXNG configuration for Simplicity.
+#
+# The one line that matters is `formats: json`. SearXNG ships with the JSON API
+# disabled, which is why no public instance can be used with this app — they
+# all return HTML or 403. Without it Simplicity gets a web page where it
+# expects results and every question fails.
+#
+# `secret_key` is deliberately left as the literal 'ultrasecretkey'. The
+# official Docker image rewrites it at container start with whatever is in the
+# SEARXNG_SECRET environment variable, so no real secret is stored in this
+# file — set SEARXNG_SECRET where you deploy it.
+
+use_default_settings: true
+
+general:
+  instance_name: 'simplicity'
+
+search:
+  autocomplete: 'google'
+  formats:
+    - html
+    - json
+
+server:
+  secret_key: 'ultrasecretkey'
+  # The rate limiter blocks programmatic requests, which is exactly what this
+  # instance exists to serve. Leave it off, and keep the URL private.
+  limiter: false
+  public_instance: false
+
+outgoing:
+  request_timeout: 8.0
+  max_request_timeout: 12.0
+
+engines:
+  - name: wolframalpha
+    disabled: false
+  - name: duckduckgo
+    disabled: false
+  - name: brave
+    disabled: false
+  - name: bing
+    disabled: false
+  - name: startpage
+    disabled: false
+  - name: qwant
+    disabled: false
+  - name: mojeek
+    disabled: false
+  - name: wikipedia
+    disabled: false

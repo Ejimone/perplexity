@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import ModelRegistry from '@/lib/models/registry';
+import { getSearxngURL } from '@/lib/config/serverRegistry';
 import { CATALOG_ROWS, availableRows, ResolvedRow } from '@/lib/models/catalog';
 import { ModelWithProvider, MinimalProvider } from '@/lib/models/types';
 import SearchAgent from '@/lib/agents/search';
@@ -191,6 +192,22 @@ export const POST = async (req: Request) => {
 
     const body = parseBody.data as Body;
     const { message } = body;
+
+    /* Every answer in this app is grounded in a real web search, so without a
+       reachable SearXNG there is nothing to ground it in. Checked up front
+       because the failure is otherwise invisible: searchSearxng throws
+       ERR_INVALID_URL on an empty base URL, each query swallows it
+       individually, and the user gets a generic failure with no clue that
+       search was never configured. */
+    if (!getSearxngURL()) {
+      return Response.json(
+        {
+          message:
+            'Search is not configured, so there is nothing to base an answer on. Set a SearXNG URL in Settings (or the SEARXNG_API_URL environment variable) and try again.',
+        },
+        { status: 503 },
+      );
+    }
 
     if (message.content === '') {
       return Response.json(
@@ -515,7 +532,14 @@ export const POST = async (req: Request) => {
   } catch (err) {
     console.error('An error occurred while processing chat request:', err);
     return Response.json(
-      { message: 'An error occurred while processing chat request' },
+      {
+        /* The cause used to be dropped here, leaving the same opaque sentence
+           for a missing API key, an unreachable search engine and a genuine
+           bug alike — undiagnosable without server logs. */
+        message: `An error occurred while processing chat request: ${
+          (err as Error)?.message ?? 'unknown error'
+        }`,
+      },
       { status: 500 },
     );
   }
