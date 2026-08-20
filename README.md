@@ -44,7 +44,7 @@ This is an early beta — a starting point. The core loop (search → sources �
 ## Build from source
 
 ```bash
-git clone https://github.com/Blueturboguy07/Simplicity.git
+git https://github.com/Ejimone/perplexity.git
 cd Simplicity
 yarn install
 yarn dist:mac   # or: yarn dist:win
@@ -52,7 +52,4 @@ yarn dist:mac   # or: yarn dist:win
 
 Requires Node 24+. Development: `yarn dev`, tests: `yarn test`.
 
-## Credits & license
 
-Simplicity is a fork of [Vane](https://github.com/ItzCrazyKns/Vane) by [ItzCrazyKns](https://github.com/ItzCrazyKns) (the successor to Perplexica) — an excellent foundation, rebuilt here as a desktop app with a search-first retrieval pipeline, model council, cost tracking, and the rest of the feature set above. [MIT licensed](LICENSE), same as upstream.
-# perplexity
