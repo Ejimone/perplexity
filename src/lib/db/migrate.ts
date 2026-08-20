@@ -5,9 +5,18 @@ import fs from 'fs';
 const DATA_DIR = process.env.DATA_DIR || process.cwd();
 const dbPath = path.join(DATA_DIR, './data/db.sqlite');
 
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+
 const db = new Database(dbPath);
 
-const migrationsFolder = path.join(DATA_DIR, 'drizzle');
+/* The desktop shell copies drizzle/ into DATA_DIR on every launch so the
+   migrations track the installed app version. Anywhere else DATA_DIR may be a
+   bare writable scratch directory with no migrations in it, so fall back to
+   the copy that ships alongside the source. */
+const dataDirMigrations = path.join(DATA_DIR, 'drizzle');
+const migrationsFolder = fs.existsSync(dataDirMigrations)
+  ? dataDirMigrations
+  : path.join(process.cwd(), 'drizzle');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS ran_migrations (

@@ -158,6 +158,12 @@ class ConfigManager {
   }
 
   private initializeConfig() {
+    /* The desktop shell prepares this directory before the server starts, but
+       nothing else does — a container or a serverless host boots straight into
+       a working directory that has no data/ at all, and writeFileSync does not
+       create parents. */
+    fs.mkdirSync(path.dirname(this.configPath), { recursive: true });
+
     const exists = fs.existsSync(this.configPath);
     if (!exists) {
       fs.writeFileSync(

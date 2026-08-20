@@ -22,6 +22,10 @@ const nextConfig = {
       './node_modules/@napi-rs/canvas/**',
       './node_modules/@napi-rs/canvas-linux-x64-gnu/**',
       './node_modules/@napi-rs/canvas-linux-x64-musl/**',
+      /* Migrations are read from disk at boot. The desktop shell copies them
+         into DATA_DIR itself; a hosted deploy has to carry them in the
+         bundle or the database is never created. */
+      './drizzle/**',
     ],
   },
   env: {

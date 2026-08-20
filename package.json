@@ -8,6 +8,7 @@
   "scripts": {
     "predev": "node scripts/vendor-pyodide.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/vendor-pyodide.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
