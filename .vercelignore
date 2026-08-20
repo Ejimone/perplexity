@@ -57,4 +57,7 @@ src/app/api/uploads
 src/app/api/videos
 src/app/api/weather
 src/app/api/config/setup-complete
-src/app/api/providers/[id]
+# Brackets are a character class in gitignore syntax, so a literal [id]
+# directory has to be escaped — without the backslashes this line silently
+# matched nothing and the routes kept shipping.
+src/app/api/providers/\[id\]

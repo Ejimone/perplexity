@@ -7,12 +7,10 @@ import { cn } from '@/lib/utils';
 import SmallNewsCard from '@/components/Discover/SmallNewsCard';
 import MajorNewsCard from '@/components/Discover/MajorNewsCard';
 
-export interface Discover {
-  title: string;
-  content: string;
-  url: string;
-  thumbnail: string;
-}
+import type { Discover } from '@/lib/types';
+
+/* Re-exported for the existing call sites that import it from here. */
+export type { Discover };
 
 const topics: { key: string; display: string }[] = [
   {

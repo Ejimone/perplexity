@@ -1,4 +1,4 @@
-import { Discover } from '@/app/discover/page';
+import { Discover } from '@/lib/types';
 import Link from 'next/link';
 
 const SmallNewsCard = ({ item }: { item: Discover }) => (

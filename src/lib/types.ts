@@ -213,3 +213,13 @@ export interface Chat {
   sources: string[];
   files: { fileId: string; name: string }[];
 }
+
+/* A discover feed item as the news cards render it. Defined here for the same
+   reason as Chat above — the cards are shared components and must not depend
+   on a route module. */
+export interface Discover {
+  title: string;
+  content: string;
+  url: string;
+  thumbnail: string;
+}
