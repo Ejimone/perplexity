@@ -6,13 +6,10 @@ import { BookOpenText, ClockIcon, FileText, Globe2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export interface Chat {
-  id: string;
-  title: string;
-  createdAt: string;
-  sources: string[];
-  files: { fileId: string; name: string }[];
-}
+import type { Chat } from '@/lib/types';
+
+/* Re-exported for the existing call sites that import it from here. */
+export type { Chat };
 
 const Page = () => {
   const [chats, setChats] = useState<Chat[]>([]);

@@ -1,5 +1,6 @@
 import Canvas from '@/components/Canvas';
 import BarShell from '@/components/Canvas/BarShell';
+import StandaloneShell from '@/components/Canvas/StandaloneShell';
 
 export const metadata = {
   title: 'Canvas - Simplicity',
@@ -24,6 +25,10 @@ const CanvasPage = async ({
   const { surface } = await searchParams;
 
   if (surface === 'bar') return <BarShell />;
+
+  /* A canvas-only deployment has no other pages to navigate to, so it drops
+     the app shell entirely. Set at build time, not per request. */
+  if (process.env.NEXT_PUBLIC_CANVAS_ONLY === '1') return <StandaloneShell />;
 
   return (
     <main className="h-screen overflow-hidden bg-light-primary pb-20 dark:bg-dark-primary lg:pb-0 lg:pl-[72px]">

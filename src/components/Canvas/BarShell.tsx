@@ -14,8 +14,9 @@ import Canvas from '@/components/Canvas';
 const BarShell = () => {
   useEffect(() => {
     /* Hides the navigation rail the root layout renders. See globals.css. */
-    document.documentElement.classList.add('canvas-bar');
-    return () => document.documentElement.classList.remove('canvas-bar');
+    const root = document.documentElement;
+    root.classList.add('canvas-bar', 'canvas-chromeless');
+    return () => root.classList.remove('canvas-bar', 'canvas-chromeless');
   }, []);
 
   return (

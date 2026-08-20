@@ -98,15 +98,21 @@
   }
 }
 
-/* Floating-bar window (desktop shell).
+/* Chromeless canvas.
  *
- * The bar loads /canvas?surface=bar from this same Next app, so it inherits
- * the root layout — including the navigation rail, which makes no sense in a
- * single-purpose always-on-top strip. Rather than restructure the root layout
- * (every other page depends on it), the bar tags <html> and hides the app
- * chrome here. */
-html.canvas-bar [data-app-chrome] {
+ * The canvas can be shown outside the normal app shell in two places: the
+ * desktop floating-bar window, and a hosted deploy that ships only the canvas.
+ * Both load /canvas from this same Next app, so both inherit the root layout —
+ * including the navigation rail, which makes no sense in either. Rather than
+ * restructure the root layout (every other page depends on it), those surfaces
+ * tag <html> and hide the app chrome here. */
+html.canvas-chromeless [data-app-chrome] {
   display: none !important;
+}
+
+html.canvas-chromeless main {
+  padding-left: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 html.canvas-bar,

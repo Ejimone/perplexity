@@ -201,3 +201,15 @@ export type Block =
   | UsageBlock
   | CouncilBlock
   | ErrorBlock;
+
+/* A chat as the library and the navbar render it. Defined here rather than in
+   src/app/library/page.tsx so that components importing it do not depend on a
+   route module — a component reaching into a page breaks any build that does
+   not include that page. */
+export interface Chat {
+  id: string;
+  title: string;
+  createdAt: string;
+  sources: string[];
+  files: { fileId: string; name: string }[];
+}

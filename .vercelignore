@@ -24,3 +24,37 @@ certificates
 
 # Regenerated during the build by the prebuild hook (scripts/vendor-pyodide.mjs)
 public/pyodide
+
+# ---------------------------------------------------------------------------
+# Canvas-only deployment.
+#
+# Vercel's Hobby plan allows 12 serverless functions; the full app builds ~28.
+# More importantly, the chat and search surfaces cannot work on a serverless
+# host at all — they need the local SearXNG metasearch, a headless browser for
+# page reading, and a database file that survives between requests. Shipping
+# them would only produce buttons that fail.
+#
+# Excluding the source here keeps them out of the hosted build without
+# changing the repository: the desktop app still builds all of it.
+# ---------------------------------------------------------------------------
+
+# Pages that need the local engine
+src/app/page.tsx
+src/app/c
+src/app/discover
+src/app/library
+
+# API routes that need the local engine, a real database, or a browser
+src/app/api/chat
+src/app/api/chats
+src/app/api/discover
+src/app/api/images
+src/app/api/local-runtime
+src/app/api/reconnect
+src/app/api/search
+src/app/api/suggestions
+src/app/api/uploads
+src/app/api/videos
+src/app/api/weather
+src/app/api/config/setup-complete
+src/app/api/providers/[id]

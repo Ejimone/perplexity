@@ -261,6 +261,14 @@ class ConfigManager {
 
     this.currentConfig.modelProviders.push(...newProviders);
 
+    /* A hosted deploy has nobody to click through onboarding, and its config
+       lives on a throwaway filesystem that resets on every cold start — so the
+       wizard would reappear forever. Seeding providers from env only fills in
+       the credentials; this is what says "and consider the setup done". */
+    if (process.env.SETUP_COMPLETE === 'true') {
+      this.currentConfig.setupComplete = true;
+    }
+
     /* search section */
     this.uiConfigSections.search.forEach((f) => {
       if (f.env && !this.currentConfig.search[f.key]) {

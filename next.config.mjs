@@ -38,6 +38,13 @@ const nextConfig = {
      src/app/api/canvas/sandbox/[lang]/route.ts). Pyodide therefore fetches its
      wasm and stdlib cross-origin, which needs CORS on the asset directory.
      Scoped to /pyodide/ only — nothing else in the app is readable this way. */
+  /* A canvas-only deployment does not ship the chat home page, so send the
+     site root somewhere that exists. */
+  async redirects() {
+    return process.env.CANVAS_ONLY === '1'
+      ? [{ source: '/', destination: '/canvas', permanent: false }]
+      : [];
+  },
   async headers() {
     return [
       {
