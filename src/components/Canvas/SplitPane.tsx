@@ -23,6 +23,20 @@ type Orientation = 'horizontal' | 'vertical';
  * Pointer capture (rather than window-level mousemove listeners) is what keeps
  * the drag alive over the execution iframes — an iframe otherwise swallows the
  * move events the moment the cursor crosses into it.
+ *
+ * SPLITTING ONLY HAPPENS AT @3xl (768px) AND ABOVE, and that is a CONTAINER
+ * query, not a viewport one. The distinction is the whole point: the canvas
+ * also renders inside a ~720px floating panel on a wide desktop screen, and a
+ * viewport breakpoint would hand that panel the full three-column layout and
+ * the three unusable slivers this component used to produce. Below the
+ * breakpoint the percentage is not applied and the parent decides which single
+ * pane is visible — see the tab strip in index.tsx.
+ *
+ * The split is published as the `--split` custom property rather than an
+ * inline width/height so those container queries can opt out of it; an inline
+ * style would win over any class. The `@3xl/canvas:` prefixes are written out
+ * in full on purpose — Tailwind scans for literal class strings, so building
+ * them from a constant would silently emit no CSS.
  */
 const SplitPane = ({
   orientation,
@@ -32,6 +46,8 @@ const SplitPane = ({
   max = 85,
   className,
   collapsed = false,
+  firstClassName,
+  secondClassName,
 }: {
   orientation: Orientation;
   children: [React.ReactNode, React.ReactNode];
@@ -39,10 +55,15 @@ const SplitPane = ({
   min?: number;
   max?: number;
   className?: string;
-  /* When true the second pane is hidden entirely and the first takes the
-     whole container. Used for "hide the output/assist pane" toggles without
-     unmounting the pane and losing its scroll position or streamed content. */
+  /* When true the second pane is hidden and the first takes the whole
+     container. Applied only above the split breakpoint — below it the parent's
+     tab state decides what is visible, and a collapse toggle that also fired
+     there would blank the pane the user had just selected. */
   collapsed?: boolean;
+  /* Per-pane classes, used by the parent to drive tab visibility below the
+     breakpoint. */
+  firstClassName?: string;
+  secondClassName?: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [fraction, setFraction] = useState(initial);
@@ -77,61 +98,71 @@ const SplitPane = ({
     };
   }, [dragging]);
 
-  const first = collapsed ? 100 : fraction;
-
   return (
     <div
       ref={containerRef}
       className={cn(
-        'flex min-h-0 min-w-0 overflow-hidden',
-        isHorizontal ? 'flex-row' : 'flex-col',
+        'flex min-h-0 min-w-0 flex-col overflow-hidden',
+        isHorizontal && '@3xl/canvas:flex-row',
         className,
       )}
+      style={{ ['--split' as string]: `${collapsed ? 100 : fraction}%` }}
     >
       <div
-        className="min-h-0 min-w-0 overflow-hidden"
-        style={isHorizontal ? { width: `${first}%` } : { height: `${first}%` }}
+        className={cn(
+          'min-h-0 min-w-0 flex-1 overflow-hidden',
+          /* Above the breakpoint the first pane takes exactly --split and the
+             second takes the remainder, so the handle's own width can never
+             push the pair past 100%. */
+          '@3xl/canvas:block @3xl/canvas:flex-[0_0_var(--split)]',
+          firstClassName,
+        )}
       >
         {children[0]}
       </div>
 
-      {!collapsed && (
-        <div
-          role="separator"
-          aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
-          onPointerDown={(e) => {
-            e.currentTarget.setPointerCapture(e.pointerId);
-            setDragging(true);
-          }}
-          onPointerMove={onPointerMove}
-          onPointerUp={(e) => {
-            e.currentTarget.releasePointerCapture(e.pointerId);
-            setDragging(false);
-          }}
-          onPointerCancel={() => setDragging(false)}
-          className={cn(
-            'shrink-0 bg-light-200 dark:bg-dark-200 transition-colors duration-150',
-            'hover:bg-[#24A0ED]/60 active:bg-[#24A0ED]',
-            dragging && 'bg-[#24A0ED]',
-            isHorizontal
-              ? 'w-px cursor-col-resize border-x-2 border-transparent bg-clip-padding box-content'
-              : 'h-px cursor-row-resize border-y-2 border-transparent bg-clip-padding box-content',
-          )}
-        />
-      )}
+      <div
+        role="separator"
+        aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          setDragging(true);
+        }}
+        onPointerMove={onPointerMove}
+        onPointerUp={(e) => {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+          setDragging(false);
+        }}
+        onPointerCancel={() => setDragging(false)}
+        className={cn(
+          'hidden shrink-0 bg-light-200 transition-colors duration-150 dark:bg-dark-200',
+          'hover:bg-accent/60 active:bg-accent',
+          dragging && 'bg-accent',
+          /* There is nothing to drag below the breakpoint, and a 1px painted
+             bar was never a realistic pointer target anyway. The transparent
+             border widens the grab area to 9px without widening the rule. */
+          !collapsed && '@3xl/canvas:block',
+          isHorizontal
+            ? 'box-content w-px cursor-col-resize border-x-4 border-transparent bg-clip-padding'
+            : 'box-content h-px cursor-row-resize border-y-4 border-transparent bg-clip-padding',
+        )}
+      />
 
-      {!collapsed && (
-        <div
-          className="min-h-0 min-w-0 overflow-hidden"
-          style={
-            isHorizontal
-              ? { width: `${100 - fraction}%` }
-              : { height: `${100 - fraction}%` }
-          }
-        >
-          {children[1]}
-        </div>
-      )}
+      {/* Always mounted, never conditionally rendered: collapsing the assist
+          pane used to unmount it, losing its scroll position and any reply
+          still streaming into it — which the old doc comment claimed it did
+          not do. Hidden with a class instead, and only above the breakpoint,
+          because below it the tab state is what decides. */}
+      <div
+        className={cn(
+          'min-h-0 min-w-0 flex-1 overflow-hidden',
+          '@3xl/canvas:block @3xl/canvas:flex-1',
+          collapsed && '@3xl/canvas:hidden',
+          secondClassName,
+        )}
+      >
+        {children[1]}
+      </div>
     </div>
   );
 };

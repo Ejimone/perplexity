@@ -3,7 +3,14 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { MutableRefObject } from 'react';
 import { cn } from '@/lib/utils';
-import { Disc3, Volume2, StopCircle, Layers3, Plus, CornerDownRight } from 'lucide-react';
+import {
+  Disc3,
+  Volume2,
+  StopCircle,
+  Layers3,
+  Plus,
+  CornerDownRight,
+} from 'lucide-react';
 import Markdown, { MarkdownToJSX, RuleType } from 'markdown-to-jsx';
 import Copy from './MessageActions/Copy';
 import Rewrite from './MessageActions/Rewrite';
@@ -17,10 +24,9 @@ import Citation from './MessageRenderer/Citation';
 import { annotateCitations } from './MessageRenderer/citationParser';
 import AnswerTabs from './AnswerTabs';
 import AssistantSteps from './AssistantSteps';
-import { CouncilBlock, ResearchBlock, TextBlock, UsageBlock } from '@/lib/types';
+import { CouncilBlock, ResearchBlock, TextBlock } from '@/lib/types';
 import Renderer from './Widgets/Renderer';
 import CodeBlock from './MessageRenderer/CodeBlock';
-import UsageLine from './MessageRenderer/UsageLine';
 import CouncilBlockRenderer from './MessageRenderer/CouncilBlock';
 
 const ThinkTagProcessor = ({
@@ -67,10 +73,6 @@ const MessageBox = ({
   const sources = sourceBlocks.flatMap((block) => block.data);
 
   const hasContent = section.parsedTextBlocks.length > 0;
-
-  const usageBlock = section.message.responseBlocks.find(
-    (block): block is UsageBlock => block.type === 'usage',
-  );
 
   const councilBlock = section.message.responseBlocks.find(
     (block): block is CouncilBlock => block.type === 'council',
@@ -156,14 +158,12 @@ const MessageBox = ({
 
       {loading && isLast ? null : (
         <div className="w-full py-4">
-          {usageBlock && (
-            <div className="mb-2 -ml-0.5">
-              <UsageLine block={usageBlock} />
-            </div>
-          )}
           <div className="flex flex-row items-center justify-between w-full text-black dark:text-white">
             <div className="flex flex-row items-center -ml-2">
-              <Rewrite rewrite={rewrite} messageId={section.message.messageId} />
+              <Rewrite
+                rewrite={rewrite}
+                messageId={section.message.messageId}
+              />
             </div>
             <div className="flex flex-row items-center -mr-2">
               <Copy initialMessage={parsedMessage} section={section} />

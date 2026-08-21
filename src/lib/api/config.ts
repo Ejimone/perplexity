@@ -5,7 +5,10 @@ import { ConfigModelProvider } from '@/lib/config/types';
 
 type SaveConfigBody = {
   key: string;
-  value: string;
+  /* Not just strings. Switch fields post booleans and number fields post
+     numbers; typing this as `string` is what let the falsy check below look
+     reasonable. configManager.updateConfig takes `any`. */
+  value: string | number | boolean;
 };
 
 export const GET = async (req: NextRequest) => {
@@ -34,7 +37,7 @@ export const GET = async (req: NextRequest) => {
       fields,
     });
   } catch (err) {
-    console.error('Error in getting config: ', err);
+    console.error('Error in saving config: ', err);
     return Response.json(
       { message: 'An error has occurred.' },
       { status: 500 },
@@ -46,7 +49,12 @@ export const POST = async (req: NextRequest) => {
   try {
     const body: SaveConfigBody = await req.json();
 
-    if (!body.key || !body.value) {
+    /* Presence, not truthiness. `!body.value` rejected every falsy value a
+       field can legitimately hold — `false` from a switch, `0` from a number
+       field, `''` when clearing a text field — so turning a server-scoped
+       toggle OFF returned 400 and silently failed to save, while turning it on
+       worked. Only null and undefined are actually missing. */
+    if (!body.key || body.value === undefined || body.value === null) {
       return Response.json(
         {
           message: 'Key and value are required.',
@@ -68,7 +76,7 @@ export const POST = async (req: NextRequest) => {
       },
     );
   } catch (err) {
-    console.error('Error in getting config: ', err);
+    console.error('Error in saving config: ', err);
     return Response.json(
       { message: 'An error has occurred.' },
       { status: 500 },

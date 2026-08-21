@@ -31,7 +31,7 @@ const SendOrStopButton = ({
     <button
       disabled={disabled}
       aria-label="Send"
-      className="bg-[#24A0ED] text-white disabled:text-black/50 dark:disabled:text-white/50 hover:bg-opacity-85 transition duration-100 disabled:bg-[#e0e0dc79] dark:disabled:bg-[#ececec21] rounded-full p-2"
+      className="bg-accent text-white disabled:text-black/50 dark:disabled:text-white/50 hover:bg-opacity-85 transition duration-100 disabled:bg-[#e0e0dc79] dark:disabled:bg-[#ececec21] rounded-full p-2"
     >
       <ArrowUp className="bg-background" size={17} />
     </button>

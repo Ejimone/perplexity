@@ -97,7 +97,10 @@ export const planQueries = async (input: {
       .slice(0, queryCount);
 
     if (queries.length > 0) {
-      return { plan: output.plan || `Searching for ${input.standaloneQuery}`, queries };
+      return {
+        plan: output.plan || `Searching for ${input.standaloneQuery}`,
+        queries,
+      };
     }
   } catch (err) {
     console.error('Query planning failed, falling back to raw question:', err);
@@ -143,7 +146,10 @@ export const refineQueries = async (input: {
     return { plan: output.plan || 'Digging deeper', queries };
   } catch (err) {
     /* Refinement is best-effort — round one already produced results. */
-    console.error('Query refinement failed, stopping after current round:', err);
+    console.error(
+      'Query refinement failed, stopping after current round:',
+      err,
+    );
     return null;
   }
 };

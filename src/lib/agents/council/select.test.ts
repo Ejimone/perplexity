@@ -110,7 +110,9 @@ describe('canRunCouncil', () => {
   });
 
   it('is false with only one connected row', () => {
-    const providers: MinimalProvider[] = [provider('p-openai', 'openai', ['gpt-5.1'])];
+    const providers: MinimalProvider[] = [
+      provider('p-openai', 'openai', ['gpt-5.1']),
+    ];
     expect(canRunCouncil(providers)).toBe(false);
   });
 
@@ -137,7 +139,10 @@ describe('pickChair', () => {
     ];
 
     /* claudecode/sonnet is BEST_ORDER's #1 preference. */
-    expect(pickChair(providers)).toEqual({ providerId: 'p-claudecode', key: 'sonnet' });
+    expect(pickChair(providers)).toEqual({
+      providerId: 'p-claudecode',
+      key: 'sonnet',
+    });
   });
 
   it("falls back to auto-pick's top choice when nothing in BEST_ORDER resolves", () => {
@@ -151,7 +156,10 @@ describe('pickChair', () => {
        usable rather than null, and it should be auto-pick's own top choice
        (GPT-5 mini, since CATALOG_ROWS lists it before GPT-OSS 20B and
        neither outranks the other via BEST_ORDER). */
-    expect(pickChair(providers)).toEqual({ providerId: 'p-openai', key: 'gpt-5-mini' });
+    expect(pickChair(providers)).toEqual({
+      providerId: 'p-openai',
+      key: 'gpt-5-mini',
+    });
   });
 
   it('returns null when nothing is connected', () => {

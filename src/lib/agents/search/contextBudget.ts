@@ -28,9 +28,7 @@ export const budgetChunks = (chunks: Chunk[], maxTokens: number): Chunk[] => {
     const tokens = getTokenCount(content);
     if (used + tokens > maxTokens && out.length > 0) break;
 
-    out.push(
-      content === chunk.content ? chunk : { ...chunk, content },
-    );
+    out.push(content === chunk.content ? chunk : { ...chunk, content });
     used += tokens;
   }
 

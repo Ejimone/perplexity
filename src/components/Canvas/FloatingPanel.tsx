@@ -18,8 +18,21 @@ const Canvas = dynamic(() => import('@/components/Canvas'), {
   ),
 });
 
+/* Geometry for the floating panel. Named because the bare numbers gave no
+   hint which were constraints and which were taste. */
 const MIN_W = 420;
 const MIN_H = 300;
+const DEFAULT_W = 720;
+const DEFAULT_H = 460;
+/* Where it first appears: inset from the bottom-right corner, but never
+   closer than SCREEN_MARGIN to the top or left on a small window. */
+const SEED_RIGHT_GAP = 40;
+const SEED_BOTTOM_GAP = 60;
+const SCREEN_MARGIN = 24;
+/* How much of the panel must stay on screen while dragging, so it can always
+   be grabbed again. */
+const KEEP_VISIBLE_X = 120;
+const KEEP_VISIBLE_Y = 40;
 
 /* The in-window floating canvas.
  *
@@ -37,7 +50,7 @@ const FloatingPanel = () => {
 
   const [enabled, setEnabled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [box, setBox] = useState({ x: 0, y: 0, w: 720, h: 460 });
+  const [box, setBox] = useState({ x: 0, y: 0, w: DEFAULT_W, h: DEFAULT_H });
   const [mode, setMode] = useState<'drag' | 'resize' | null>(null);
 
   const grab = useRef({ x: 0, y: 0, boxX: 0, boxY: 0, w: 0, h: 0 });
@@ -64,8 +77,8 @@ const FloatingPanel = () => {
   useEffect(() => {
     setBox((prev) => ({
       ...prev,
-      x: Math.max(24, window.innerWidth - prev.w - 40),
-      y: Math.max(24, window.innerHeight - prev.h - 60),
+      x: Math.max(SCREEN_MARGIN, window.innerWidth - prev.w - SEED_RIGHT_GAP),
+      y: Math.max(SCREEN_MARGIN, window.innerHeight - prev.h - SEED_BOTTOM_GAP),
     }));
   }, []);
 
@@ -81,11 +94,11 @@ const FloatingPanel = () => {
               ...prev,
               x: Math.min(
                 Math.max(0, grab.current.boxX + dx),
-                window.innerWidth - 120,
+                window.innerWidth - KEEP_VISIBLE_X,
               ),
               y: Math.min(
                 Math.max(0, grab.current.boxY + dy),
-                window.innerHeight - 40,
+                window.innerHeight - KEEP_VISIBLE_Y,
               ),
             }
           : {
@@ -141,6 +154,10 @@ const FloatingPanel = () => {
       onKeyUp={(e) => e.stopPropagation()}
     >
       <div
+        /* Stable hook for scripts/verify/panel-test.mjs. It used to find this
+           strip with span:text("Canvas"), which also matches the navigation's
+           Canvas label and silently measured the wrong element. */
+        data-canvas-panel-header
         onPointerDown={start('drag')}
         onPointerMove={onPointerMove}
         onPointerUp={end}

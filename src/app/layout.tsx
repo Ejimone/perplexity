@@ -4,12 +4,13 @@ import type { Metadata } from 'next';
 import { Montserrat, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import Sidebar from '@/components/Sidebar';
+import Nav from '@/components/Nav';
 import { Toaster } from 'sonner';
 import ThemeProvider from '@/components/theme/Provider';
 import configManager from '@/lib/config';
 import SetupWizard from '@/components/Setup/SetupWizard';
 import { ChatProvider } from '@/lib/hooks/useChat';
+import { ViewProvider } from '@/lib/hooks/useView';
 import CanvasFloatingPanel from '@/components/Canvas/FloatingPanel';
 
 const montserrat = Montserrat({
@@ -30,8 +31,8 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'Simplicity - Direct your curiosity',
-  description: 'Simplicity is an AI powered answering engine.',
+  title: 'Curiocity - Direct your curiosity',
+  description: 'Curiocity is an AI powered answering engine.',
 };
 
 export default function RootLayout({
@@ -53,9 +54,18 @@ export default function RootLayout({
       >
         <ThemeProvider>
           {setupComplete ? (
-            <ChatProvider>
-              <Sidebar>{children}</Sidebar>
-            </ChatProvider>
+            /* Nav is a sibling of the page, not a wrapper around it. It used
+               to wrap children in <Layout/>, which meant /canvas — a
+               full-viewport editor that documents itself as opting out of
+               Layout — was in fact rendered inside Layout's centred
+               max-w-screen-lg column, as a <main> inside a <main>. Pages own
+               their own wrapper now. */
+            <ViewProvider>
+              <ChatProvider>
+                <Nav />
+                {children}
+              </ChatProvider>
+            </ViewProvider>
           ) : (
             <SetupWizard configSections={configSections} />
           )}

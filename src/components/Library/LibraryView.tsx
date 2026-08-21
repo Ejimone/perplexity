@@ -4,6 +4,8 @@ import DeleteChat from '@/components/DeleteChat';
 import { formatTimeDifference } from '@/lib/utils';
 import { BookOpenText, ClockIcon, FileText, Globe2Icon } from 'lucide-react';
 import Link from 'next/link';
+import { useChat } from '@/lib/hooks/useChat';
+import { useView } from '@/lib/hooks/useView';
 import { useEffect, useState } from 'react';
 
 import type { Chat } from '@/lib/types';
@@ -11,7 +13,9 @@ import type { Chat } from '@/lib/types';
 /* Re-exported for the existing call sites that import it from here. */
 export type { Chat };
 
-const Page = () => {
+const LibraryView = () => {
+  const { switchChat } = useChat();
+  const { setView } = useView();
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,9 +130,21 @@ const Page = () => {
                   }
                 >
                   <div className="flex items-start justify-between gap-3">
+                    {/* A thread is ?c=<id> on this route rather than its own
+                        /c/[chatId] page, so opening one is a state change and
+                        a pushState, not a navigation. The href is real so the
+                        link still copies and opens in a new tab. */}
                     <Link
-                      href={`/c/${chat.id}`}
-                      className="flex-1 text-black dark:text-white text-base lg:text-lg font-medium leading-snug line-clamp-2 group-hover:text-[#24A0ED] transition duration-200"
+                      href={`/?c=${chat.id}`}
+                      onClick={(e) => {
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+                          return;
+                        e.preventDefault();
+                        window.history.pushState(null, '', `/?c=${chat.id}`);
+                        switchChat(chat.id);
+                        setView('chat');
+                      }}
+                      className="flex-1 text-black dark:text-white text-base lg:text-lg font-medium leading-snug line-clamp-2 group-hover:text-accent transition duration-200"
                       title={chat.title}
                     >
                       {chat.title}
@@ -172,4 +188,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default LibraryView;

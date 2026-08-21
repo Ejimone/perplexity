@@ -26,7 +26,7 @@ const path = require('node:path');
 /* Where a packed app keeps its resources, per platform. */
 function resourcesDir(context) {
   if (context.electronPlatformName === 'darwin') {
-    const appName = context.packager.appInfo.productFilename; // "Simplicity"
+    const appName = context.packager.appInfo.productFilename; // "Curiocity"
     return path.join(context.appOutDir, `${appName}.app`, 'Contents', 'Resources');
   }
   return path.join(context.appOutDir, 'resources');

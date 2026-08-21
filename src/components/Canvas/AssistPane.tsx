@@ -15,6 +15,14 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MONO_STACK } from './theme';
+
+/* How tall a streamed code block and the composer are allowed to grow before
+   they scroll internally. Named because 'max-h-80' read as an arbitrary
+   choice: the first keeps a long reply from pushing the Insert/Replace
+   buttons off screen, the second keeps the composer from eating the
+   conversation on a phone. */
+const CODE_BLOCK_MAX_H = 'max-h-80';
+const COMPOSER_MAX_H = 'max-h-24';
 import {
   parseSegments,
   splitReasoning,
@@ -81,7 +89,7 @@ const CodeCard = ({
             title="Replace the whole buffer"
             disabled={!segment.complete}
             onClick={() => act('replace')}
-            className="flex items-center gap-x-1 rounded bg-[#24A0ED]/10 px-1.5 py-1 text-[11px] text-[#24A0ED] transition duration-200 hover:bg-[#24A0ED]/20 disabled:opacity-30"
+            className="flex items-center gap-x-1 rounded bg-accent/10 px-1.5 py-1 text-[11px] text-accent transition duration-200 hover:bg-accent/20 disabled:opacity-30"
           >
             {applied === 'replace' ? (
               <Check size={13} />
@@ -94,7 +102,10 @@ const CodeCard = ({
       </div>
 
       <pre
-        className="max-h-80 overflow-auto bg-light-primary p-2 text-[12px] leading-relaxed text-black/80 dark:bg-dark-primary dark:text-white/80"
+        className={cn(
+          CODE_BLOCK_MAX_H,
+          'overflow-auto bg-light-primary p-2 text-[12px] leading-relaxed text-black/80 dark:bg-dark-primary dark:text-white/80',
+        )}
         style={{ fontFamily: MONO_STACK }}
       >
         {segment.value}
@@ -121,7 +132,7 @@ const ExchangeView = ({
   return (
     <div className="border-b border-light-200 px-3 py-3 last:border-b-0 dark:border-dark-200">
       <p className="mb-2 flex items-start gap-x-1.5 text-[12px] font-medium text-black/70 dark:text-white/70">
-        <Sparkles size={13} className="mt-0.5 shrink-0 text-[#24A0ED]" />
+        <Sparkles size={13} className="mt-0.5 shrink-0 text-accent" />
         {exchange.label}
       </p>
 
@@ -241,7 +252,7 @@ const AssistPane = ({
       </div>
 
       <div className="shrink-0 border-t border-light-200 p-2 dark:border-dark-200">
-        <div className="flex items-end gap-x-1.5 rounded-lg border border-light-200 bg-light-primary px-2 py-1.5 focus-within:border-[#24A0ED]/50 dark:border-dark-200 dark:bg-dark-primary">
+        <div className="flex items-end gap-x-1.5 rounded-lg border border-light-200 bg-light-primary px-2 py-1.5 focus-within:border-accent/50 dark:border-dark-200 dark:bg-dark-primary">
           <textarea
             value={draft}
             rows={1}
@@ -256,13 +267,16 @@ const AssistPane = ({
                 submit();
               }
             }}
-            className="max-h-24 min-h-[20px] flex-1 resize-none bg-transparent text-[12.5px] text-black/80 placeholder:text-black/35 focus:outline-none dark:text-white/80 dark:placeholder:text-white/35"
+            className={cn(
+              COMPOSER_MAX_H,
+              'min-h-[20px] flex-1 resize-none bg-transparent text-[12.5px] text-black/80 placeholder:text-black/35 focus:outline-none dark:text-white/80 dark:placeholder:text-white/35',
+            )}
           />
           <button
             onClick={submit}
             disabled={!draft.trim() || streaming}
             title="Send"
-            className="rounded p-1 text-[#24A0ED] transition duration-200 hover:bg-[#24A0ED]/10 disabled:opacity-30"
+            className="rounded p-1 text-accent transition duration-200 hover:bg-accent/10 disabled:opacity-30"
           >
             <CornerDownLeft size={14} />
           </button>

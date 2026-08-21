@@ -2,72 +2,35 @@ import { EditorView } from '@codemirror/view';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 import type { Extension } from '@codemirror/state';
+import {
+  ACCENT,
+  accentAlpha,
+  EDITOR,
+  type EditorPalette,
+  MONO_STACK,
+  SYNTAX,
+  type SyntaxPalette,
+} from '@/lib/theme/palette';
 
 /* CodeMirror theme for the canvas.
  *
- * Every colour here is lifted value-for-value from the app's existing
- * highlighter themes (src/components/MessageRenderer/CodeBlock/CodeBlock{Dark,
- * Light}Theme.ts) so a snippet looks identical whether it is sitting in a chat
- * answer or open in the editor. The mapping is hljs token -> Lezer tag; where
- * hljs is coarser than Lezer (its `variable` covers things Lezer splits four
- * ways) the palette entry is applied to the Lezer tags that read the same way,
- * and plain identifiers are deliberately left on the base foreground so the
- * buffer does not turn into confetti.
- *
- * The app has no monospace token — there is no code editing anywhere else — so
- * the stack is defined here.
+ * Every colour is derived from src/lib/theme/palette.ts, which also feeds
+ * tailwind.config.ts and the chat highlighter themes -- so a snippet looks
+ * identical whether it is sitting in a chat answer or open in the editor, and
+ * the three can no longer drift apart. The mapping here is hljs token -> Lezer
+ * tag; where hljs is coarser than Lezer (its `variable` covers things Lezer
+ * splits four ways) the palette entry is applied to the Lezer tags that read
+ * the same way, and plain identifiers are deliberately left on the base
+ * foreground so the buffer does not turn into confetti.
  */
 
-export const MONO_STACK =
-  "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
+/* Re-exported: Output.tsx and AssistPane.tsx import it from here. */
+export { MONO_STACK };
 
-type Palette = {
-  bg: string;
-  fg: string;
-  border: string;
-  comment: string;
-  salmon: string; // hljs variable/tag/name/regexp/deletion
-  yellow: string; // hljs number/built_in/literal/type/params/meta/link
-  blue: string; // hljs attribute
-  green: string; // hljs string/symbol/bullet/addition
-  title: string; // hljs title/section
-  keyword: string; // hljs keyword/selector-tag
-  gutter: string;
-  activeLine: string;
-  selection: string;
-};
+type Palette = SyntaxPalette & EditorPalette;
 
-const DARK: Palette = {
-  bg: '#0d1117',
-  fg: '#c9d1d9',
-  border: '#21262d',
-  comment: '#8b949e',
-  salmon: '#ff7b72',
-  yellow: '#f2cc60',
-  blue: '#58a6ff',
-  green: '#7ee787',
-  title: '#79c0ff',
-  keyword: '#c297ff',
-  gutter: '#6e7681',
-  activeLine: '#161b22',
-  selection: 'rgba(36, 160, 237, 0.28)',
-};
-
-const LIGHT: Palette = {
-  bg: '#ffffff',
-  fg: '#24292f',
-  border: '#e8edf1',
-  comment: '#6e7781',
-  salmon: '#d73a49',
-  yellow: '#b08800',
-  blue: '#0a64ae',
-  green: '#22863a',
-  title: '#005cc5',
-  keyword: '#6f42c1',
-  gutter: '#8c959f',
-  activeLine: '#f6f8fa',
-  selection: 'rgba(36, 160, 237, 0.20)',
-};
+const DARK: Palette = { ...SYNTAX.dark, ...EDITOR.dark };
+const LIGHT: Palette = { ...SYNTAX.light, ...EDITOR.light };
 
 const highlightFor = (p: Palette) =>
   HighlightStyle.define([
@@ -131,7 +94,7 @@ const highlightFor = (p: Palette) =>
     },
     { tag: [t.variableName, t.definition(t.variableName)], color: p.fg },
 
-    { tag: [t.invalid], color: '#ff7b72', textDecoration: 'underline wavy' },
+    { tag: [t.invalid], color: p.salmon, textDecoration: 'underline wavy' },
     { tag: [t.emphasis], fontStyle: 'italic' },
     { tag: [t.strong], fontWeight: 'bold' },
   ]);
@@ -150,9 +113,9 @@ const baseFor = (p: Palette, dark: boolean) =>
         lineHeight: '1.6',
         overflow: 'auto',
       },
-      '.cm-content': { caretColor: '#24A0ED', padding: '12px 0' },
+      '.cm-content': { caretColor: ACCENT.DEFAULT, padding: '12px 0' },
       '.cm-cursor, .cm-dropCursor': {
-        borderLeftColor: '#24A0ED',
+        borderLeftColor: ACCENT.DEFAULT,
         borderLeftWidth: '2px',
       },
 
@@ -178,13 +141,13 @@ const baseFor = (p: Palette, dark: boolean) =>
       '.cm-foldGutter .cm-gutterElement': { padding: '0 2px' },
 
       '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': {
-        backgroundColor: 'rgba(36, 160, 237, 0.20)',
+        backgroundColor: accentAlpha(0.2),
         outline: `1px solid ${p.blue}`,
       },
       '.cm-nonmatchingBracket': { outline: `1px solid ${p.salmon}` },
 
       '.cm-tooltip': {
-        backgroundColor: dark ? '#161b22' : '#f6f8fa',
+        backgroundColor: p.surface,
         border: `1px solid ${p.border}`,
         borderRadius: '8px',
         color: p.fg,
@@ -192,7 +155,7 @@ const baseFor = (p: Palette, dark: boolean) =>
         fontSize: '12px',
       },
       '.cm-tooltip-autocomplete > ul > li[aria-selected]': {
-        backgroundColor: dark ? '#21262d' : '#e8edf1',
+        backgroundColor: p.selected,
         color: p.fg,
       },
 
@@ -204,12 +167,12 @@ const baseFor = (p: Palette, dark: boolean) =>
       },
       '.cm-lint-marker-error': { content: 'none' },
       '.cm-panels': {
-        backgroundColor: dark ? '#161b22' : '#f6f8fa',
+        backgroundColor: p.surface,
         color: p.fg,
       },
-      '.cm-searchMatch': { backgroundColor: 'rgba(242, 204, 96, 0.30)' },
+      '.cm-searchMatch': { backgroundColor: p.searchMatch },
       '.cm-searchMatch.cm-searchMatch-selected': {
-        backgroundColor: 'rgba(36, 160, 237, 0.40)',
+        backgroundColor: accentAlpha(0.4),
       },
     },
     { dark },

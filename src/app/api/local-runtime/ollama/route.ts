@@ -19,10 +19,16 @@ import { NextRequest } from 'next/server';
 
 export const GET = async () => {
   try {
-    return Response.json({ ...(await status()), tiers: MODEL_TIERS }, { status: 200 });
+    return Response.json(
+      { ...(await status()), tiers: MODEL_TIERS },
+      { status: 200 },
+    );
   } catch (err) {
     console.error('Failed to read local runtime status', err);
-    return Response.json({ message: 'An error has occurred.' }, { status: 500 });
+    return Response.json(
+      { message: 'An error has occurred.' },
+      { status: 500 },
+    );
   }
 };
 

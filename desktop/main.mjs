@@ -34,14 +34,14 @@ let healthTimer = null;
 const dataDir = () => app.getPath('userData');
 
 /* One append-only log for everything the shell and its children emit, at
-   <userData>/logs/simplicity.log. Opened lazily and reused so both stdout and
+   <userData>/logs/curiocity.log. Opened lazily and reused so both stdout and
    stderr of a child land in the same file. */
 let logHandle = null;
 function logFd() {
   if (logHandle === null) {
     const dir = path.join(dataDir(), 'logs');
     fs.mkdirSync(dir, { recursive: true });
-    logHandle = fs.openSync(path.join(dir, 'simplicity.log'), 'a');
+    logHandle = fs.openSync(path.join(dir, 'curiocity.log'), 'a');
   }
   return logHandle;
 }
@@ -131,7 +131,7 @@ async function startServer() {
 
   if (!fs.existsSync(path.join(dir, 'server.js'))) {
     throw new Error(
-      `Simplicity's server build is missing at ${dir}. Run \`yarn build\` first.`,
+      `Curiocity's server build is missing at ${dir}. Run \`yarn build\` first.`,
     );
   }
 
@@ -163,7 +163,7 @@ async function startServer() {
     }
     await new Promise((r) => setTimeout(r, 400));
   }
-  throw new Error("Simplicity's server started but isn't responding.");
+  throw new Error("Curiocity's server started but isn't responding.");
 }
 
 async function ensureRunning(onLog) {
@@ -182,7 +182,7 @@ async function ensureRunning(onLog) {
     }
     serverProc = null;
   }
-  onLog?.('Starting Simplicity…');
+  onLog?.('Starting Curiocity…');
   return startServer();
 }
 
@@ -209,7 +209,7 @@ async function createWindow() {
     minWidth: 880,
     minHeight: 620,
     backgroundColor: '#0a0a0a',
-    title: 'Simplicity',
+    title: 'Curiocity',
     show: false,
     webPreferences: { contextIsolation: true, nodeIntegration: false },
   });
@@ -266,8 +266,8 @@ async function createWindow() {
     log(`startup failed: ${err?.stack ?? err}`);
     splashCall('__setError', err?.message ?? String(err));
     dialog.showErrorBox(
-      'Simplicity could not start',
-      `${err?.message ?? err}\n\nDetails were written to:\n${path.join(dataDir(), 'logs', 'simplicity.log')}`,
+      'Curiocity could not start',
+      `${err?.message ?? err}\n\nDetails were written to:\n${path.join(dataDir(), 'logs', 'curiocity.log')}`,
     );
   }
 }

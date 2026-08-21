@@ -12,7 +12,7 @@
  */
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('simplicityBar', {
+contextBridge.exposeInMainWorld('curiocityBar', {
   hide: () => ipcRenderer.send('canvas-bar:hide'),
   resize: (width, height) =>
     ipcRenderer.send('canvas-bar:resize', {

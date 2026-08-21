@@ -133,6 +133,18 @@ class ConfigManager {
         scope: 'server',
         env: 'SEARXNG_API_URL',
       },
+      {
+        name: 'Serper API key',
+        key: 'serperApiKey',
+        type: 'password',
+        required: false,
+        description:
+          'Optional. Used instead of SearXNG when set — needed for hosted deployments, which cannot reach a SearXNG running on your own machine. Get a key at serper.dev.',
+        placeholder: 'Serper API key',
+        default: '',
+        scope: 'server',
+        env: 'SERPER_API_KEY',
+      },
     ],
   };
 
@@ -247,6 +259,17 @@ class ConfigManager {
       if (configured) {
         const hash = hashObj(newProvider.config);
         newProvider.hash = hash;
+
+        /* Derived from the provider's own config rather than random, because
+           this id has to be the same everywhere. A hosted deployment keeps its
+           config on a throwaway filesystem, so every cold start re-seeds from
+           the environment — with crypto.randomUUID() the instance that listed
+           the providers hands the browser an id the next instance has never
+           seen, and the request fails with "Invalid provider id". Providers the
+           user added by hand keep the ids already stored in their config; this
+           only names the ones seeded from environment variables. */
+        newProvider.id = `${provider.key}-${hash.slice(0, 16)}`;
+
         delete newProvider.required;
 
         const exists = this.currentConfig.modelProviders.find(

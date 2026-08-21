@@ -170,7 +170,10 @@ export type CouncilBlock = {
     chairStatus: 'pending' | 'streaming' | 'done' | 'skipped' | 'error';
     chairSkippedReason?: string;
     convergence: string[];
-    divergence: { point: string; positions: { model: string; stance: string }[] }[];
+    divergence: {
+      point: string;
+      positions: { model: string; stance: string }[];
+    }[];
     unique: { model: string; insight: string }[];
     /* Pre-run rough estimate (prompt tokens x per-model rate + a heuristic
        completion length) so the UI can show cost BEFORE the meter has real
@@ -203,7 +206,7 @@ export type Block =
   | ErrorBlock;
 
 /* A chat as the library and the navbar render it. Defined here rather than in
-   src/app/library/page.tsx so that components importing it do not depend on a
+   src/components/Library/LibraryView.tsx so that components importing it do not depend on a
    route module — a component reaching into a page breaks any build that does
    not include that page. */
 export interface Chat {

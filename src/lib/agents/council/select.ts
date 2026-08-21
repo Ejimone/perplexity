@@ -1,5 +1,10 @@
 import { MinimalProvider } from '@/lib/models/types';
-import { availableRows, resolveBest, BEST_ORDER, ResolvedRow } from '@/lib/models/catalog';
+import {
+  availableRows,
+  resolveBest,
+  BEST_ORDER,
+  ResolvedRow,
+} from '@/lib/models/catalog';
 import { resolvePricingKey, estimateCostUSD } from '@/lib/pricing/table';
 import { getTokenCount } from '@/lib/utils/splitText';
 
@@ -11,8 +16,10 @@ import { getTokenCount } from '@/lib/utils/splitText';
 export const MAX_COUNCIL_MEMBERS = 3;
 export const MIN_COUNCIL_MEMBERS = 2;
 
-const typeOfProvider = (providers: MinimalProvider[], providerId: string): string =>
-  providers.find((p) => p.id === providerId)?.type ?? 'unknown';
+const typeOfProvider = (
+  providers: MinimalProvider[],
+  providerId: string,
+): string => providers.find((p) => p.id === providerId)?.type ?? 'unknown';
 
 /* Rank by the exact same quality/cost preference order "Best" uses
    (BEST_ORDER, catalog.ts) so auto-pick and "Best" never disagree about
@@ -21,7 +28,9 @@ const typeOfProvider = (providers: MinimalProvider[], providerId: string): strin
    still eligible, just never preferred over a ranked option, so a
    single-vendor setup isn't left short of members. */
 const qualityRank = (providerType: string, key: string): number => {
-  const idx = BEST_ORDER.findIndex((c) => c.providerType === providerType && c.key === key);
+  const idx = BEST_ORDER.findIndex(
+    (c) => c.providerType === providerType && c.key === key,
+  );
   return idx === -1 ? BEST_ORDER.length : idx;
 };
 
@@ -32,12 +41,18 @@ const qualityRank = (providerType: string, key: string): number => {
    differ), cap at 3. If fewer than 3 distinct vendors are connected, this
    returns what exists (the MIN_COUNCIL_MEMBERS floor is enforced by
    canRunCouncil at the entry point, not here). */
-export const autoPickCouncil = (providers: MinimalProvider[]): ResolvedRow[] => {
+export const autoPickCouncil = (
+  providers: MinimalProvider[],
+): ResolvedRow[] => {
   const ranked = availableRows(providers)
-    .map((row) => ({ row, providerType: typeOfProvider(providers, row.providerId) }))
+    .map((row) => ({
+      row,
+      providerType: typeOfProvider(providers, row.providerId),
+    }))
     .sort(
       (a, b) =>
-        qualityRank(a.providerType, a.row.key) - qualityRank(b.providerType, b.row.key),
+        qualityRank(a.providerType, a.row.key) -
+        qualityRank(b.providerType, b.row.key),
     );
 
   const picked: ResolvedRow[] = [];
@@ -79,7 +94,9 @@ export const pickChair = (
   if (best) return best;
 
   const [fallback] = autoPickCouncil(providers);
-  return fallback ? { providerId: fallback.providerId, key: fallback.key } : null;
+  return fallback
+    ? { providerId: fallback.providerId, key: fallback.key }
+    : null;
 };
 
 export type CouncilCostEstimate = {
@@ -107,7 +124,11 @@ export const estimateCouncilCost = (
 ): CouncilCostEstimate => {
   const promptTokens = getTokenCount(promptText);
 
-  const estimateOne = (providerType: string, key: string, completionTokens: number) => {
+  const estimateOne = (
+    providerType: string,
+    key: string,
+    completionTokens: number,
+  ) => {
     const pricingKey = resolvePricingKey(providerType, key);
     const usd = estimateCostUSD(pricingKey, {
       inputTokens: promptTokens,
@@ -117,7 +138,11 @@ export const estimateCouncilCost = (
   };
 
   const perMember = members.map((m) => {
-    const { usd, free } = estimateOne(m.providerType, m.key, MEMBER_COMPLETION_HEURISTIC_TOKENS);
+    const { usd, free } = estimateOne(
+      m.providerType,
+      m.key,
+      MEMBER_COMPLETION_HEURISTIC_TOKENS,
+    );
     return { rowId: m.rowId, usd, free };
   });
 
@@ -130,7 +155,8 @@ export const estimateCouncilCost = (
   const free = perMember.every((m) => m.free) && chairEstimate.free;
   const totalUSD = free
     ? null
-    : perMember.reduce((sum, m) => sum + (m.usd ?? 0), 0) + (chairEstimate.usd ?? 0);
+    : perMember.reduce((sum, m) => sum + (m.usd ?? 0), 0) +
+      (chairEstimate.usd ?? 0);
 
   return { totalUSD, free, perMember };
 };

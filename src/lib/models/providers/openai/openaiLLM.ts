@@ -107,7 +107,8 @@ class OpenAILLM extends BaseLLM<OpenAIConfig> {
       this.recordUsage({
         inputTokens: response.usage.prompt_tokens ?? 0,
         outputTokens: response.usage.completion_tokens ?? 0,
-        cachedInputTokens: response.usage.prompt_tokens_details?.cached_tokens ?? 0,
+        cachedInputTokens:
+          response.usage.prompt_tokens_details?.cached_tokens ?? 0,
       });
     }
 
@@ -245,7 +246,8 @@ class OpenAILLM extends BaseLLM<OpenAIConfig> {
       this.recordUsage({
         inputTokens: response.usage.prompt_tokens ?? 0,
         outputTokens: response.usage.completion_tokens ?? 0,
-        cachedInputTokens: response.usage.prompt_tokens_details?.cached_tokens ?? 0,
+        cachedInputTokens:
+          response.usage.prompt_tokens_details?.cached_tokens ?? 0,
       });
     }
 

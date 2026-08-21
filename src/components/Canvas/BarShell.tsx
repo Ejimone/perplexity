@@ -20,7 +20,7 @@ const BarShell = () => {
   }, []);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden rounded-xl border border-light-200 bg-light-primary dark:border-dark-200 dark:bg-dark-primary">
+    <div className="flex h-[100dvh] flex-col overflow-hidden rounded-xl border border-light-200 bg-light-primary dark:border-dark-200 dark:bg-dark-primary">
       <div
         className="flex shrink-0 select-none items-center gap-x-2 border-b border-light-200 bg-light-secondary px-2.5 py-1.5 dark:border-dark-200 dark:bg-dark-secondary"
         style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
@@ -34,7 +34,7 @@ const BarShell = () => {
         </span>
 
         <button
-          onClick={() => window.simplicityBar?.hide()}
+          onClick={() => window.curiocityBar?.hide()}
           title="Hide (Cmd/Ctrl+Shift+\)"
           style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
           className="ml-auto rounded p-1 text-black/45 transition duration-200 hover:bg-light-200 hover:text-black/70 dark:text-white/45 dark:hover:bg-dark-200 dark:hover:text-white/70"

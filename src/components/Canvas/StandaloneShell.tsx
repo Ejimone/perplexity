@@ -20,7 +20,7 @@ const StandaloneShell = () => {
   }, []);
 
   return (
-    <main className="h-screen overflow-hidden bg-light-primary dark:bg-dark-primary">
+    <main className="h-[100dvh] overflow-hidden bg-light-primary dark:bg-dark-primary">
       <Canvas surface="page" />
     </main>
   );

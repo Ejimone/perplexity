@@ -136,7 +136,7 @@ export const verifyClaudeCode = (
       '--output-format',
       'json',
       '--allowed-tools',
-      'None__SimplicityTextOnly',
+      'None__CuriocityTextOnly',
       '--strict-mcp-config',
       '--disable-slash-commands',
       '--no-session-persistence',
@@ -170,10 +170,16 @@ export const verifyClaudeCode = (
       try {
         const parsed = JSON.parse(out);
         if (parsed.is_error) {
-          return resolve({ ok: false, message: String(parsed.result).slice(0, 200) });
+          return resolve({
+            ok: false,
+            message: String(parsed.result).slice(0, 200),
+          });
         }
       } catch {
-        return resolve({ ok: false, message: 'Unexpected response from Claude Code.' });
+        return resolve({
+          ok: false,
+          message: 'Unexpected response from Claude Code.',
+        });
       }
       resolve({ ok: true });
     });
@@ -221,7 +227,7 @@ class ClaudeCodeLLM extends BaseLLM<Config> {
          into the answer. A non-matching sentinel genuinely disables tools and
          yields a single turn. */
       '--allowed-tools',
-      'None__SimplicityTextOnly',
+      'None__CuriocityTextOnly',
       '--strict-mcp-config',
       '--disable-slash-commands',
       /* Every query would otherwise persist a Claude Code session. */
@@ -310,7 +316,9 @@ class ClaudeCodeLLM extends BaseLLM<Config> {
     }
     if (!result) throw new Error('No response from Claude Code.');
     if (result.is_error) {
-      throw new Error(`Claude Code error: ${String(result.result).slice(0, 300)}`);
+      throw new Error(
+        `Claude Code error: ${String(result.result).slice(0, 300)}`,
+      );
     }
     this.recordResultUsage(result);
     return (result.result ?? '').trim();

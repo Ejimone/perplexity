@@ -26,8 +26,8 @@ const canNotarize =
 
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
-  appId: 'com.simplicity.desktop',
-  productName: 'Simplicity',
+  appId: 'com.curiocity.desktop',
+  productName: 'Curiocity',
   publish: null,
   /* Never rebuild native modules: better-sqlite3 is N-API and ships prebuilds
      for every platform inside the package (prebuilds/win32-x64.node etc.), so
@@ -43,17 +43,17 @@ module.exports = {
   mac: {
     target: [{ target: 'dmg', arch: ['arm64'] }],
     category: 'public.app-category.productivity',
-    artifactName: 'Simplicity-mac-${arch}.${ext}',
+    artifactName: 'Curiocity-mac-${arch}.${ext}',
     identity: hasCert ? undefined : null,
     hardenedRuntime: hasCert,
     entitlements: 'desktop/entitlements.mac.plist',
     entitlementsInherit: 'desktop/entitlements.mac.plist',
     notarize: canNotarize,
   },
-  dmg: { title: 'Simplicity ${version}' },
+  dmg: { title: 'Curiocity ${version}' },
   win: {
     target: [{ target: 'nsis', arch: ['x64'] }],
-    artifactName: 'Simplicity-Setup-Windows.${ext}',
+    artifactName: 'Curiocity-Setup-Windows.${ext}',
   },
   nsis: {
     oneClick: false,

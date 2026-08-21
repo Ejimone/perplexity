@@ -1,8 +1,8 @@
-# SearXNG configuration for Simplicity.
+# SearXNG configuration for Curiocity.
 #
 # The one line that matters is `formats: json`. SearXNG ships with the JSON API
 # disabled, which is why no public instance can be used with this app — they
-# all return HTML or 403. Without it Simplicity gets a web page where it
+# all return HTML or 403. Without it Curiocity gets a web page where it
 # expects results and every question fails.
 #
 # `secret_key` is deliberately left as the literal 'ultrasecretkey'. The
@@ -13,7 +13,7 @@
 use_default_settings: true
 
 general:
-  instance_name: 'simplicity'
+  instance_name: 'curiocity'
 
 search:
   autocomplete: 'google'

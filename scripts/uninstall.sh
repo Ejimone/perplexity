@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Uninstalls Simplicity from macOS: the app bundle, everything it wrote to
+# Uninstalls Curiocity from macOS: the app bundle, everything it wrote to
 # ~/Library/Application Support, and the small Electron/Chromium cache and
 # state folders that come with any Electron app. See ../UNINSTALL.md for the
 # full breakdown of what each path is and why it exists — this script is
@@ -41,17 +41,17 @@ for arg in "$@"; do
   esac
 done
 
-# Every path Simplicity's own code writes to, plus the Electron/Chromium
+# Every path Curiocity's own code writes to, plus the Electron/Chromium
 # cache and window-state folders the OS creates alongside any app with this
 # bundle ID. Missing entries are expected and fine — most people never touch
 # the Ollama binary path, for instance, unless they installed it through the
 # app's onboarding "Install" button.
-APP_BUNDLE="/Applications/Simplicity.app"
-DATA_DIR="$HOME/Library/Application Support/Simplicity"
-CACHE_DIR="$HOME/Library/Caches/Simplicity"
-SAVED_STATE_DIR="$HOME/Library/Saved Application State/com.simplicity.desktop.savedState"
-HTTP_STORAGE_DIR="$HOME/Library/HTTPStorages/com.simplicity.desktop"
-HTTP_STORAGE_COOKIES="$HOME/Library/HTTPStorages/com.simplicity.desktop.binarycookies"
+APP_BUNDLE="/Applications/Curiocity.app"
+DATA_DIR="$HOME/Library/Application Support/Curiocity"
+CACHE_DIR="$HOME/Library/Caches/Curiocity"
+SAVED_STATE_DIR="$HOME/Library/Saved Application State/com.curiocity.desktop.savedState"
+HTTP_STORAGE_DIR="$HOME/Library/HTTPStorages/com.curiocity.desktop"
+HTTP_STORAGE_COOKIES="$HOME/Library/HTTPStorages/com.curiocity.desktop.binarycookies"
 
 targets=(
   "$APP_BUNDLE"
@@ -62,7 +62,7 @@ targets=(
   "$HTTP_STORAGE_COOKIES"
 )
 
-echo "Simplicity uninstaller"
+echo "Curiocity uninstaller"
 echo "======================"
 echo
 found_any=false
@@ -75,7 +75,7 @@ for t in "${targets[@]}"; do
 done
 
 if [[ "$found_any" == false ]]; then
-  echo "Nothing found — Simplicity doesn't appear to be installed for this user."
+  echo "Nothing found — Curiocity doesn't appear to be installed for this user."
   exit 0
 fi
 
@@ -94,7 +94,7 @@ if [[ "$assume_yes" != true ]]; then
 fi
 
 # Quit the app first so nothing holds the SQLite file or a log fd open mid-delete.
-osascript -e 'quit app "Simplicity"' >/dev/null 2>&1 || true
+osascript -e 'quit app "Curiocity"' >/dev/null 2>&1 || true
 
 removed=0
 for t in "${targets[@]}"; do
@@ -104,4 +104,4 @@ for t in "${targets[@]}"; do
   fi
 done
 
-echo "Removed $removed item(s). Simplicity has been uninstalled."
+echo "Removed $removed item(s). Curiocity has been uninstalled."

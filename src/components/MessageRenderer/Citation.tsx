@@ -4,7 +4,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { Chunk } from '@/lib/types';
-import { faviconUrl, getDomainLabel, getHost, isFileSource } from './sourceUtils';
+import {
+  faviconUrl,
+  getDomainLabel,
+  getHost,
+  isFileSource,
+} from './sourceUtils';
 
 /**
  * Renders `<citation idx="1,2,5">` produced by annotateCitations.
@@ -56,7 +61,10 @@ const Citation = ({
 
   if (indices.length === 0) return null;
 
-  const group = indices.map((number) => ({ number, chunk: sources[number - 1] }));
+  const group = indices.map((number) => ({
+    number,
+    chunk: sources[number - 1],
+  }));
   const primary = group[0];
   const primaryHost = getHost(primary.chunk?.metadata?.url);
 

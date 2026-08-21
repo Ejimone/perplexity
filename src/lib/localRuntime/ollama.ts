@@ -113,12 +113,14 @@ async function downloadBinary(onLog: (m: string) => void): Promise<string> {
        picks it up on the very next call, so re-clicking Install is genuinely
        enough to finish setup — this isn't a dead end. */
     throw new Error(
-      "Automatic download isn't available on this platform yet. Install Ollama yourself from https://ollama.com/download, then click Install again — Simplicity will detect it and finish setup from there.",
+      "Automatic download isn't available on this platform yet. Install Ollama yourself from https://ollama.com/download, then click Install again — Curiocity will detect it and finish setup from there.",
     );
   }
 
   onLog('Downloading the local engine — a one-time download of about 150 MB.');
-  const res = await fetch(DARWIN_TGZ, { headers: { 'user-agent': 'Simplicity' } });
+  const res = await fetch(DARWIN_TGZ, {
+    headers: { 'user-agent': 'Curiocity' },
+  });
   if (!res.ok) throw new Error(`Couldn't download Ollama (${res.status})`);
 
   const tgz = path.join(dir, 'ollama-darwin.tgz');
@@ -131,7 +133,9 @@ async function downloadBinary(onLog: (m: string) => void): Promise<string> {
 
   const bin = path.join(dir, 'ollama');
   if (!fs.existsSync(bin)) {
-    throw new Error("The download didn't contain the expected files. Try again.");
+    throw new Error(
+      "The download didn't contain the expected files. Try again.",
+    );
   }
   fs.chmodSync(bin, 0o755);
   return bin;
@@ -196,7 +200,8 @@ async function pullModel(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: name, stream: true }),
   });
-  if (!res.ok || !res.body) throw new Error(`Couldn't download ${name} (${res.status})`);
+  if (!res.ok || !res.body)
+    throw new Error(`Couldn't download ${name} (${res.status})`);
 
   const reader = res.body.getReader();
   const dec = new TextDecoder();
@@ -236,7 +241,9 @@ export async function provision(
 
   if (!bin) {
     emit({ phase: 'installing', message: 'Setting up the local engine…' });
-    bin = await downloadBinary((message) => emit({ phase: 'installing', message }));
+    bin = await downloadBinary((message) =>
+      emit({ phase: 'installing', message }),
+    );
   }
 
   emit({ phase: 'starting', message: 'Starting the local engine…' });

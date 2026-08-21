@@ -21,6 +21,18 @@ const ACCELERATOR = 'CommandOrControl+Shift+\\';
 const DEFAULT_WIDTH = 820;
 const DEFAULT_HEIGHT = 520;
 const MARGIN_TOP = 90;
+/* Smallest size the bar stays usable at: below this the canvas toolbar and
+   its editor have nowhere to go. Also the floor for a renderer-requested
+   resize. */
+const MIN_WIDTH = 480;
+const MIN_HEIGHT = 280;
+/* Ceiling for a renderer-requested resize. The bar is an always-on-top
+   overlay, so an unbounded request from the page could cover the screen. */
+const MAX_WIDTH = 2000;
+const MAX_HEIGHT = 1400;
+/* How often the config file is polled for the canvas-surface preference. See
+   applyPreference for why this polls rather than using fs.watch. */
+const CONFIG_POLL_MS = 2000;
 
 let ctx = null;
 let barWindow = null;
@@ -64,8 +76,8 @@ const create = () => {
     transparent: true,
     hasShadow: true,
     resizable: true,
-    minWidth: 480,
-    minHeight: 280,
+    minWidth: MIN_WIDTH,
+    minHeight: MIN_HEIGHT,
     alwaysOnTop: true,
     skipTaskbar: true,
     fullscreenable: false,
@@ -180,10 +192,10 @@ export function init({ mainWindow, dataDir, getServerURL, log }) {
 
     ipcMain.on('canvas-bar:resize', (event, size) => {
       if (!fromBar(event)) return;
-      const width = Math.max(480, Math.min(2000, Math.round(size?.width || 0)));
+      const width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, Math.round(size?.width || 0)));
       const height = Math.max(
-        280,
-        Math.min(1400, Math.round(size?.height || 0)),
+        MIN_HEIGHT,
+        Math.min(MAX_HEIGHT, Math.round(size?.height || 0)),
       );
       if (width && height) barWindow.setSize(width, height, true);
     });
@@ -204,7 +216,7 @@ export function init({ mainWindow, dataDir, getServerURL, log }) {
   const file = configPath(dataDir);
   if (watchedConfig !== file) {
     if (watchedConfig) fs.unwatchFile(watchedConfig);
-    fs.watchFile(file, { interval: 2000 }, applyPreference);
+    fs.watchFile(file, { interval: CONFIG_POLL_MS }, applyPreference);
     watchedConfig = file;
   }
 }

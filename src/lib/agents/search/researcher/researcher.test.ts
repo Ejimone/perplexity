@@ -63,7 +63,9 @@ class FakeEmbedding extends BaseEmbedding<any> {
   }
 }
 
-const classification = (over: Partial<ClassifierOutput['classification']> = {}) =>
+const classification = (
+  over: Partial<ClassifierOutput['classification']> = {},
+) =>
   ({
     classification: {
       skipSearch: false,
@@ -152,7 +154,10 @@ describe('deterministic researcher', () => {
     searchMock.mockResolvedValue(searxngPage(5));
 
     const llm = new TextOnlyLLM([
-      { plan: 'Researching Mann Bellani', queries: ['mann bellani', 'mann bellani texas a&m'] },
+      {
+        plan: 'Researching Mann Bellani',
+        queries: ['mann bellani', 'mann bellani texas a&m'],
+      },
     ]);
 
     const researcher = new Researcher();

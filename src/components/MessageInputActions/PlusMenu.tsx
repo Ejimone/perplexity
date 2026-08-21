@@ -1,4 +1,9 @@
-import { Popover, PopoverButton, PopoverPanel, Switch } from '@headlessui/react';
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Switch,
+} from '@headlessui/react';
 import {
   CaretLeftIcon,
   CaretRightIcon,
@@ -134,7 +139,10 @@ const PlusMenu = () => {
           </PopoverButton>
           <AnimatePresence>
             {open && (
-              <PopoverPanel static className="absolute z-20 w-64 bottom-11 left-0">
+              <PopoverPanel
+                static
+                className="absolute z-20 w-64 bottom-11 left-0"
+              >
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 4 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -151,7 +159,9 @@ const PlusMenu = () => {
                       >
                         <span className="flex flex-row items-center space-x-2">
                           <Paperclip size={15} />
-                          <span className="text-xs">Upload files or images</span>
+                          <span className="text-xs">
+                            Upload files or images
+                          </span>
                         </span>
                         {files.length > 0 && (
                           <span className="text-[10px] text-black/40 dark:text-white/40">
@@ -189,7 +199,9 @@ const PlusMenu = () => {
                             if (!sources.includes(source.key)) {
                               setSources([...sources, source.key]);
                             } else {
-                              setSources(sources.filter((s) => s !== source.key));
+                              setSources(
+                                sources.filter((s) => s !== source.key),
+                              );
                             }
                           }}
                         >
@@ -228,7 +240,10 @@ const PlusMenu = () => {
           </AnimatePresence>
           <AnimatePresence>
             {settingsOpen && (
-              <SettingsDialogue isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
+              <SettingsDialogue
+                isOpen={settingsOpen}
+                setIsOpen={setSettingsOpen}
+              />
             )}
           </AnimatePresence>
         </>

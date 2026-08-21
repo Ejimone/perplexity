@@ -4,6 +4,7 @@ import { Message } from '@/components/ChatWindow';
 import { Block } from '@/lib/types';
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -11,7 +12,7 @@ import {
   useState,
 } from 'react';
 import crypto from 'crypto';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { getSuggestions } from '../actions';
 import { MinimalProvider } from '../models/types';
@@ -59,6 +60,9 @@ type ChatContext = {
   embeddingModelProvider: EmbeddingModelProvider;
   researchEnded: boolean;
   setResearchEnded: (ended: boolean) => void;
+  /* Open an already-persisted thread. Used by the Library view, which used
+     to reach a thread by navigating to /c/<id>. */
+  switchChat: (id: string) => void;
   setOptimizationMode: (mode: string) => void;
   setSearchMode: (mode: 'search' | 'deepResearch' | 'council') => void;
   setSources: (sources: string[]) => void;
@@ -307,15 +311,18 @@ export const chatContext = createContext<ChatContext>({
   setChatModelProvider: () => {},
   setEmbeddingModelProvider: () => {},
   setResearchEnded: () => {},
+  switchChat: () => {},
 });
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
-  const params: { chatId: string } = useParams();
-
   const searchParams = useSearchParams();
   const initialMessage = searchParams.get('q');
 
-  const [chatId, setChatId] = useState<string | undefined>(params.chatId);
+  /* A saved thread is identified by ?c=<id> rather than by a /c/[chatId]
+     route. See src/lib/hooks/useView.tsx for why the pages became views. */
+  const urlChatId = searchParams.get('c') ?? undefined;
+
+  const [chatId, setChatId] = useState<string | undefined>(urlChatId);
   const [newChatCreated, setNewChatCreated] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -519,7 +526,11 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const stored = localStorage.getItem('searchMode');
-    if (stored === 'search' || stored === 'deepResearch' || stored === 'council') {
+    if (
+      stored === 'search' ||
+      stored === 'deepResearch' ||
+      stored === 'council'
+    ) {
       setSearchModeState(stored);
     }
   }, []);
@@ -529,22 +540,28 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('searchMode', mode);
   };
 
+  /* Load an already-persisted thread, resetting everything scoped to the one
+     being left. Called both when ?c= changes (a deep link, or Back) and
+     directly by the Library view. */
+  const switchChat = useCallback((id: string) => {
+    setChatId(id);
+    setMessages([]);
+    chatHistory.current = [];
+    setFiles([]);
+    setFileIds([]);
+    setIsMessagesLoaded(false);
+    setNotFound(false);
+    setNewChatCreated(false);
+    /* Incognito is scoped to the thread that was active, never the one being
+       switched to. */
+    setIncognito(false);
+  }, []);
+
   useEffect(() => {
-    if (params.chatId && params.chatId !== chatId) {
-      setChatId(params.chatId);
-      setMessages([]);
-      chatHistory.current = [];
-      setFiles([]);
-      setFileIds([]);
-      setIsMessagesLoaded(false);
-      setNotFound(false);
-      setNewChatCreated(false);
-      /* Navigating to a different (already-persisted) chat — incognito is
-         scoped to the thread that was active, never the one being switched
-         to. */
-      setIncognito(false);
+    if (urlChatId && urlChatId !== chatId) {
+      switchChat(urlChatId);
     }
-  }, [params.chatId, chatId]);
+  }, [urlChatId, chatId, switchChat]);
 
   useEffect(() => {
     if (
@@ -803,7 +820,10 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     abortRef.current = abortController;
 
     if (messages.length <= 1) {
-      window.history.replaceState(null, '', `/c/${chatId}`);
+      /* Make the new thread linkable without navigating. ?c= rather than
+         /c/<id>: the route no longer exists, and on the hosted build it never
+         did — that URL 404'd on reload. */
+      window.history.replaceState(null, '', `/?c=${chatId}`);
     }
 
     messageId = messageId ?? crypto.randomBytes(7).toString('hex');
@@ -951,6 +971,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         setEmbeddingModelProvider,
         researchEnded,
         setResearchEnded,
+        switchChat,
       }}
     >
       {children}

@@ -156,11 +156,7 @@ class Researcher {
          for that instead of just counting query strings. */
       const verticalCount = Math.max(verticals.length, 1);
 
-      for (
-        let round = 0;
-        round < DEEP_RESEARCH_MAX_ROUNDS;
-        round++
-      ) {
+      for (let round = 0; round < DEEP_RESEARCH_MAX_ROUNDS; round++) {
         if (input.config.signal?.aborted) break;
         if (Date.now() - startedAt > DEEP_RESEARCH_MAX_WALL_CLOCK_MS) break;
         if (deepResearchSearxngQueries >= DEEP_RESEARCH_MAX_SEARXNG_QUERIES)
@@ -191,7 +187,10 @@ class Researcher {
         const breadthResults = await runVerticals(queries, 'balanced');
 
         if (breadthResults.length > 0) {
-          actionOutput.push({ type: 'search_results', results: breadthResults });
+          actionOutput.push({
+            type: 'search_results',
+            results: breadthResults,
+          });
           rawChunks += breadthResults.length;
           breadthResults.forEach((r) => {
             if (r.metadata.title) allTitles.push(r.metadata.title);
@@ -293,7 +292,9 @@ class Researcher {
     if (input.config.fileIds.length > 0 && !input.config.signal?.aborted) {
       try {
         const uploadResults = await uploadsSearchAction.execute(
-          { queries: [standaloneQuery, ...Array.from(seenQueries)].slice(0, 3) },
+          {
+            queries: [standaloneQuery, ...Array.from(seenQueries)].slice(0, 3),
+          },
           {
             llm: input.config.llm,
             embedding: input.config.embedding,
@@ -333,7 +334,10 @@ class Researcher {
           session,
         });
         if (backstopResults.length > 0) {
-          actionOutput.push({ type: 'search_results', results: backstopResults });
+          actionOutput.push({
+            type: 'search_results',
+            results: backstopResults,
+          });
         }
       } catch (err) {
         console.error('Backstop search failed:', err);

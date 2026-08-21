@@ -167,7 +167,11 @@ describe('CouncilAgent orchestration', () => {
   it('survives one member throwing and still runs the chair', async () => {
     const members = [
       member('a', new FakeMemberLLM(['Answer from A.'])),
-      member('b', new FakeMemberLLM(['partial before boom'], 'model B blew up'), 'anthropic'),
+      member(
+        'b',
+        new FakeMemberLLM(['partial before boom'], 'model B blew up'),
+        'anthropic',
+      ),
       member('c', new FakeMemberLLM(['Answer from C.']), 'gemini'),
     ];
     const chair = new FakeChairLLM(['Synthesized verdict.']);
@@ -185,7 +189,9 @@ describe('CouncilAgent orchestration', () => {
     });
 
     const blocks = session.getAllBlocks();
-    const councilBlock = blocks.find((b) => b.type === 'council') as CouncilBlock;
+    const councilBlock = blocks.find(
+      (b) => b.type === 'council',
+    ) as CouncilBlock;
     const textBlock = blocks.find((b) => b.type === 'text') as TextBlock;
 
     expect(councilBlock).toBeDefined();
@@ -230,7 +236,9 @@ describe('CouncilAgent orchestration', () => {
     });
 
     const blocks = session.getAllBlocks();
-    const councilBlock = blocks.find((b) => b.type === 'council') as CouncilBlock;
+    const councilBlock = blocks.find(
+      (b) => b.type === 'council',
+    ) as CouncilBlock;
     const textBlock = blocks.find((b) => b.type === 'text') as TextBlock;
 
     expect(councilBlock.data.chairStatus).toBe('skipped');
@@ -258,10 +266,14 @@ describe('CouncilAgent orchestration', () => {
     });
 
     const blocks = session.getAllBlocks();
-    const councilBlock = blocks.find((b) => b.type === 'council') as CouncilBlock;
+    const councilBlock = blocks.find(
+      (b) => b.type === 'council',
+    ) as CouncilBlock;
     const textBlock = blocks.find((b) => b.type === 'text') as TextBlock;
 
-    expect(councilBlock.data.members.every((m) => m.status === 'error')).toBe(true);
+    expect(councilBlock.data.members.every((m) => m.status === 'error')).toBe(
+      true,
+    );
     expect(councilBlock.data.chairStatus).toBe('skipped');
     expect(textBlock.data).toMatch(/every model in the council failed/i);
     expect(dbRows.get(messageId)?.status).toBe('completed');
@@ -289,9 +301,13 @@ describe('CouncilAgent orchestration', () => {
     });
 
     const blocks = session.getAllBlocks();
-    const councilBlock = blocks.find((b) => b.type === 'council') as CouncilBlock;
+    const councilBlock = blocks.find(
+      (b) => b.type === 'council',
+    ) as CouncilBlock;
 
-    expect(councilBlock.data.members.every((m) => m.status === 'cancelled')).toBe(true);
+    expect(
+      councilBlock.data.members.every((m) => m.status === 'cancelled'),
+    ).toBe(true);
     expect(councilBlock.data.chairStatus).toBe('skipped');
     expect(dbRows.get(messageId)?.status).toBe('cancelled');
   });
@@ -339,7 +355,9 @@ describe('CouncilAgent orchestration', () => {
     });
 
     const blocks = session.getAllBlocks();
-    const councilBlock = blocks.find((b) => b.type === 'council') as CouncilBlock;
+    const councilBlock = blocks.find(
+      (b) => b.type === 'council',
+    ) as CouncilBlock;
     const usageBlock = blocks.find((b) => b.type === 'usage') as any;
 
     const [a, b] = councilBlock.data.members;
@@ -351,6 +369,8 @@ describe('CouncilAgent orchestration', () => {
     expect(b.cost).toBeUndefined();
 
     expect(usageBlock).toBeDefined();
-    expect(usageBlock.data.breakdown.some((e: any) => e.providerId === 'p-a')).toBe(true);
+    expect(
+      usageBlock.data.breakdown.some((e: any) => e.providerId === 'p-a'),
+    ).toBe(true);
   });
 });

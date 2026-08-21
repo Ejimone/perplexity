@@ -1,9 +1,7 @@
 import { Dialog, DialogPanel } from '@headlessui/react';
 import {
-  ArrowLeft,
   BrainCog,
   ChevronLeft,
-  ExternalLink,
   Search,
   Sliders,
   ToggleRight,
@@ -16,7 +14,6 @@ import Loader from '../ui/Loader';
 import { cn } from '@/lib/utils';
 import Models from './Sections/Models/Section';
 import SearchSection from './Sections/Search';
-import Select from '@/components/ui/Select';
 import Personalization from './Sections/Personalization';
 
 const sections = [
@@ -96,6 +93,8 @@ const SettingsDialogue = ({
     }
   }, [isOpen]);
 
+  const selected = selectedSection;
+
   return (
     <Dialog
       open={isOpen}
@@ -107,94 +106,83 @@ const SettingsDialogue = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.1 }}
-        className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/30 backdrop-blur-sm h-screen"
+        className="fixed inset-0 flex h-[100dvh] w-screen items-center justify-center bg-black/30 p-2 backdrop-blur-sm sm:p-4"
       >
-        <DialogPanel className="space-y-4 border border-light-200 dark:border-dark-200 bg-light-primary dark:bg-dark-primary backdrop-blur-lg rounded-xl h-[calc(100vh-2%)] w-[calc(100vw-2%)] md:h-[calc(100vh-7%)] md:w-[calc(100vw-7%)] lg:h-[calc(100vh-20%)] lg:w-[calc(100vw-30%)] overflow-hidden flex flex-col">
+        {/* dvh, not vh: on a phone the browser's collapsing chrome makes vh
+            taller than the visible viewport, so the panel's bottom edge — and
+            with it the save buttons inside each section — sat under the URL
+            bar. */}
+        <DialogPanel className="flex h-[calc(100dvh-1rem)] w-full flex-col overflow-hidden rounded-xl border border-light-200 bg-light-primary backdrop-blur-lg sm:h-[calc(100dvh-2rem)] lg:h-[min(46rem,calc(100dvh-8rem))] lg:w-[min(64rem,calc(100vw-8rem))] dark:border-dark-200 dark:bg-dark-primary">
           {isLoading ? (
-            <div className="flex items-center justify-center h-full w-full">
+            <div className="flex h-full w-full items-center justify-center">
               <Loader />
             </div>
           ) : (
-            <div className="flex flex-1 inset-0 h-full overflow-hidden">
-              <div className="hidden lg:flex flex-col justify-between w-[240px] border-r border-white-200 dark:border-dark-200 h-full px-3 pt-3 overflow-y-auto">
-                <div className="flex flex-col">
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="group flex flex-row items-center hover:bg-light-200 hover:dark:bg-dark-200 p-2 rounded-lg"
-                  >
-                    <ChevronLeft
-                      size={18}
-                      className="text-black/50 dark:text-white/50 group-hover:text-black/70 group-hover:dark:text-white/70"
-                    />
-                    <p className="text-black/50 dark:text-white/50 group-hover:text-black/70 group-hover:dark:text-white/70 text-[14px]">
-                      Back
-                    </p>
-                  </button>
+            /* One section list, not two.
+             *
+             * This was a fixed 240px rail plus a completely separate <Select>
+             * for small screens — two navigation implementations for one
+             * concept, the same duplication the app-level Sidebar had. It is
+             * now a single list that reflows: a horizontally scrollable tab
+             * strip on a phone, a rail from lg up. */
+            <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+              <div className="flex shrink-0 flex-row items-center gap-x-2 border-b border-light-200 px-2 py-2 lg:w-56 lg:flex-col lg:items-stretch lg:gap-y-1 lg:border-b-0 lg:border-r lg:px-3 lg:py-3 dark:border-dark-200">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close settings"
+                  className="group flex shrink-0 flex-row items-center rounded-lg p-2 hover:bg-light-200 lg:mb-6 lg:self-start dark:hover:bg-dark-200"
+                >
+                  <ChevronLeft
+                    size={18}
+                    className="text-black/50 group-hover:text-black/70 dark:text-white/50 dark:group-hover:text-white/70"
+                  />
+                  <p className="hidden text-[14px] text-black/50 group-hover:text-black/70 lg:block dark:text-white/50 dark:group-hover:text-white/70">
+                    Back
+                  </p>
+                </button>
 
-                  <div className="flex flex-col items-start space-y-1 mt-8">
-                    {sections.map((section) => (
-                      <button
-                        key={section.dataAdd}
-                        className={cn(
-                          `flex flex-row items-center space-x-2 px-2 py-1.5 rounded-lg w-full text-sm hover:bg-light-200 hover:dark:bg-dark-200 transition duration-200 active:scale-95`,
-                          activeSection === section.key
-                            ? 'bg-light-200 dark:bg-dark-200 text-black/90 dark:text-white/90'
-                            : ' text-black/70 dark:text-white/70',
-                        )}
-                        onClick={() => setActiveSection(section.key)}
-                      >
-                        <section.icon size={17} />
-                        <p>{section.name}</p>
-                      </button>
-                    ))}
-                  </div>
+                {/* overflow-hidden-scrollable is the app's existing
+                    hide-the-scrollbar utility (globals.css). */}
+                <div className="overflow-hidden-scrollable flex flex-1 flex-row gap-x-1 overflow-x-auto lg:flex-col lg:gap-y-1 lg:overflow-x-visible">
+                  {sections.map((section) => (
+                    <button
+                      key={section.key}
+                      onClick={() => setActiveSection(section.key)}
+                      aria-current={
+                        activeSection === section.key ? 'true' : undefined
+                      }
+                      className={cn(
+                        'flex shrink-0 flex-row items-center gap-x-2 rounded-lg px-2.5 py-1.5 text-sm transition duration-200 active:scale-95 hover:bg-light-200 lg:w-full dark:hover:bg-dark-200',
+                        activeSection === section.key
+                          ? 'bg-light-200 text-black/90 dark:bg-dark-200 dark:text-white/90'
+                          : 'text-black/70 dark:text-white/70',
+                      )}
+                    >
+                      <section.icon size={17} className="shrink-0" />
+                      <p className="whitespace-nowrap">{section.name}</p>
+                    </button>
+                  ))}
                 </div>
               </div>
-              <div className="w-full flex flex-col overflow-hidden">
-                <div className="flex flex-row lg:hidden w-full justify-between px-[20px] my-4 flex-shrink-0">
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="group flex flex-row items-center hover:bg-light-200 hover:dark:bg-dark-200 rounded-lg mr-[40%]"
-                  >
-                    <ArrowLeft
-                      size={18}
-                      className="text-black/50 dark:text-white/50 group-hover:text-black/70 group-hover:dark:text-white/70"
-                    />
-                  </button>
-                  <Select
-                    options={sections.map((section) => {
-                      return {
-                        value: section.key,
-                        key: section.key,
-                        label: section.name,
-                      };
-                    })}
-                    value={activeSection}
-                    onChange={(e) => {
-                      setActiveSection(e.target.value);
-                    }}
-                    className="!text-xs lg:!text-sm"
-                  />
-                </div>
-                {selectedSection.component && (
-                  <div className="flex flex-1 flex-col overflow-hidden">
-                    <div className="border-b border-light-200/60 px-6 pb-6 lg:pt-6 dark:border-dark-200/60 flex-shrink-0">
-                      <div className="flex flex-col">
-                        <h4 className="font-medium text-black dark:text-white text-sm lg:text-sm">
-                          {selectedSection.name}
-                        </h4>
-                        <p className="text-[11px] lg:text-xs text-black/50 dark:text-white/50">
-                          {selectedSection.description}
-                        </p>
-                      </div>
+
+              <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+                {selected.component && (
+                  <>
+                    <div className="shrink-0 border-b border-light-200/60 px-4 py-4 lg:px-6 lg:py-5 dark:border-dark-200/60">
+                      <h4 className="text-sm font-medium text-black dark:text-white">
+                        {selected.name}
+                      </h4>
+                      <p className="text-[11px] text-black/50 lg:text-xs dark:text-white/50">
+                        {selected.description}
+                      </p>
                     </div>
-                    <div className="flex-1 overflow-y-auto">
-                      <selectedSection.component
-                        fields={config.fields[selectedSection.dataAdd]}
-                        values={config.values[selectedSection.dataAdd]}
+                    <div className="min-h-0 flex-1 overflow-y-auto">
+                      <selected.component
+                        fields={config.fields[selected.dataAdd]}
+                        values={config.values[selected.dataAdd]}
                       />
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
             </div>

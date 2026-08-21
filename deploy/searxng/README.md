@@ -1,5 +1,5 @@
 ---
-title: Simplicity Search
+title: Curiocity Search
 emoji: 🔍
 colorFrom: gray
 colorTo: blue
@@ -8,16 +8,16 @@ app_port: 8080
 pinned: false
 ---
 
-# SearXNG for Simplicity
+# SearXNG for Curiocity
 
-A private metasearch instance for a hosted Simplicity deployment. Simplicity
+A private metasearch instance for a hosted Curiocity deployment. Curiocity
 answers questions from real web results, so it needs a search engine it can
 query — this is that engine.
 
 ## Why this exists rather than using a public instance
 
 SearXNG ships with its JSON API switched off, and every public instance leaves
-it that way to stop people scripting against it. Simplicity asks for
+it that way to stop people scripting against it. Curiocity asks for
 `format=json`, so a public instance returns an HTML page (or a 403) and every
 question fails. `settings.yml` here turns JSON on, which is the whole point of
 running your own.
@@ -33,7 +33,7 @@ running your own.
 4. Wait for the build, then note the Space URL:
    `https://<your-name>-<space-name>.hf.space`
 
-## Pointing Simplicity at it
+## Pointing Curiocity at it
 
 Set `SEARXNG_API_URL` to that URL — **with no trailing slash**, because the app
 builds `${SEARXNG_API_URL}/search?format=json`.
@@ -45,8 +45,8 @@ builds `${SEARXNG_API_URL}/search?format=json`.
 ## Running it locally
 
 ```bash
-docker build -t simplicity-searxng .
-docker run -d -p 8888:8080 -e SEARXNG_SECRET="$(openssl rand -hex 32)" simplicity-searxng
+docker build -t curiocity-searxng .
+docker run -d -p 8888:8080 -e SEARXNG_SECRET="$(openssl rand -hex 32)" curiocity-searxng
 curl "http://127.0.0.1:8888/search?q=test&format=json"
 ```
 

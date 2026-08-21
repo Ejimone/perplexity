@@ -1,6 +1,6 @@
 {
   "name": "vane",
-  "productName": "Simplicity",
+  "productName": "Curiocity",
   "version": "1.12.2",
   "license": "MIT",
   "engines": {
@@ -52,6 +52,7 @@
     "better-sqlite3": "^13.0.1",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.45.2",
+    "framer-motion": "^12.38.0",
     "js-tiktoken": "^1.0.21",
     "jsdom": "^29.0.1",
     "jspdf": "^4.2.1",
@@ -84,6 +85,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^4.2.0",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@types/better-sqlite3": "^7.6.12",
     "@types/jsdom": "^28.0.1",
     "@types/jspdf": "^2.0.0",

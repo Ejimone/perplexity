@@ -187,7 +187,9 @@ const PassageList = ({ chunks }: { chunks: Chunk[] }) => (
       >
         <FileText className="w-3.5 h-3.5 flex-shrink-0 text-black/40 dark:text-white/40" />
         <span className="line-clamp-1">
-          {chunk.metadata?.title || chunk.metadata?.fileName || 'Untitled document'}
+          {chunk.metadata?.title ||
+            chunk.metadata?.fileName ||
+            'Untitled document'}
         </span>
       </div>
     ))}

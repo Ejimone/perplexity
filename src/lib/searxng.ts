@@ -1,4 +1,5 @@
-import { getSearxngURL } from './config/serverRegistry';
+import { getSearxngURL, getSerperApiKey } from './config/serverRegistry';
+import { searchSerper } from './search/serper';
 
 export interface SearxngSearchOptions {
   categories?: string[];
@@ -7,7 +8,7 @@ export interface SearxngSearchOptions {
   pageno?: number;
 }
 
-interface SearxngSearchResult {
+export interface SearxngSearchResult {
   title: string;
   url: string;
   img_src?: string;
@@ -22,6 +23,14 @@ export const searchSearxng = async (
   query: string,
   opts?: SearxngSearchOptions,
 ) => {
+  /* A configured Serper key wins. The desktop app has none and keeps using the
+     local SearXNG it provisions, so its searches still never leave the
+     machine; a hosted deployment has no local engine to talk to and would
+     otherwise have no way to search at all. The name of this function is kept
+     so that every existing caller, and the tests that mock it, stay put. */
+  const serperApiKey = getSerperApiKey();
+  if (serperApiKey) return searchSerper(serperApiKey, query, opts);
+
   const searxngURL = getSearxngURL();
 
   const url = new URL(`${searxngURL}/search?format=json`);

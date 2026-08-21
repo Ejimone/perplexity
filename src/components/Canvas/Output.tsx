@@ -35,7 +35,13 @@ const Output = ({
   const empty = chunks.length === 0 && !result && !running;
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-light-primary dark:bg-dark-primary">
+    /* data-canvas-output: a stable hook for the verify scripts. Reading the
+       run's result off document.body instead picks up the editor buffer,
+       which contains the very string the assertion is looking for. */
+    <div
+      data-canvas-output
+      className="flex h-full min-h-0 flex-col bg-light-primary dark:bg-dark-primary"
+    >
       <div className="flex shrink-0 items-center justify-between border-b border-light-200 px-3 py-1.5 dark:border-dark-200">
         <div className="flex items-center gap-x-2">
           <span className="text-[11px] font-medium uppercase tracking-wide text-black/50 dark:text-white/50">

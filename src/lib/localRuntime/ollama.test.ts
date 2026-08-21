@@ -28,10 +28,13 @@ import { promisify } from 'node:util';
    top-level `const`s in this file — referencing those consts from inside a
    factory throws "Cannot access before initialization". vi.hoisted() is the
    documented escape hatch: it hoists right alongside the mock factories. */
-const { execFileState, execFileMock, spawnMock, existsSyncState, fsMockObj } = vi.hoisted(
-  () => {
+const { execFileState, execFileMock, spawnMock, existsSyncState, fsMockObj } =
+  vi.hoisted(() => {
     const execFileState: {
-      impl: (cmd: string, args: string[]) => Promise<{ stdout: string; stderr: string }>;
+      impl: (
+        cmd: string,
+        args: string[],
+      ) => Promise<{ stdout: string; stderr: string }>;
     } = {
       impl: async () => {
         throw Object.assign(new Error('not found'), { code: 1 });
@@ -39,7 +42,11 @@ const { execFileState, execFileMock, spawnMock, existsSyncState, fsMockObj } = v
     };
 
     const execFileMock = vi.fn(
-      (cmd: string, args: string[], cb: (err: any, stdout: string, stderr: string) => void) => {
+      (
+        cmd: string,
+        args: string[],
+        cb: (err: any, stdout: string, stderr: string) => void,
+      ) => {
         execFileState.impl(cmd, args).then(
           ({ stdout, stderr }) => cb(null, stdout, stderr),
           (err) => cb(err, '', ''),
@@ -58,9 +65,14 @@ const { execFileState, execFileMock, spawnMock, existsSyncState, fsMockObj } = v
       rmSync: vi.fn(),
     };
 
-    return { execFileState, execFileMock, spawnMock, existsSyncState, fsMockObj };
-  },
-);
+    return {
+      execFileState,
+      execFileMock,
+      spawnMock,
+      existsSyncState,
+      fsMockObj,
+    };
+  });
 
 (execFileMock as any)[promisify.custom] = (cmd: string, args: string[]) =>
   execFileState.impl(cmd, args);
@@ -79,7 +91,10 @@ import { OLLAMA_URL, provision, status } from './ollama';
 
 const realPlatform = process.platform;
 function setPlatform(platform: 'darwin' | 'win32') {
-  Object.defineProperty(process, 'platform', { value: platform, configurable: true });
+  Object.defineProperty(process, 'platform', {
+    value: platform,
+    configurable: true,
+  });
 }
 
 describe('Ollama install state machine', () => {
@@ -115,7 +130,10 @@ describe('Ollama install state machine', () => {
 
   it('finds an already-installed binary on PATH and skips the download phase entirely', async () => {
     setPlatform('darwin');
-    execFileState.impl = async () => ({ stdout: '/opt/homebrew/bin/ollama\n', stderr: '' });
+    execFileState.impl = async () => ({
+      stdout: '/opt/homebrew/bin/ollama\n',
+      stderr: '',
+    });
     existsSyncState.paths.add('/opt/homebrew/bin/ollama');
 
     const phases: string[] = [];
@@ -133,13 +151,18 @@ describe('Ollama install state machine', () => {
     // One 'pulling' emit per model at minimum (the chat model and the
     // embedding model) — provision() also emits a sub-progress update from
     // inside pullModel itself, so this is a floor, not an exact count.
-    expect(phases.filter((p) => p === 'pulling').length).toBeGreaterThanOrEqual(2);
+    expect(phases.filter((p) => p === 'pulling').length).toBeGreaterThanOrEqual(
+      2,
+    );
     expect(phases[phases.length - 1]).toBe('ready');
   });
 
   it('is idempotent: calling it twice in a row does not re-download or re-pull', async () => {
     setPlatform('darwin');
-    execFileState.impl = async () => ({ stdout: '/opt/homebrew/bin/ollama\n', stderr: '' });
+    execFileState.impl = async () => ({
+      stdout: '/opt/homebrew/bin/ollama\n',
+      stderr: '',
+    });
     existsSyncState.paths.add('/opt/homebrew/bin/ollama');
 
     await provision('qwen2.5:7b', () => {});
@@ -147,9 +170,9 @@ describe('Ollama install state machine', () => {
 
     // hasModel() reports both models already present on every call, so a
     // second provision() is all reads — no /api/pull, no re-download.
-    expect(fetchMock.mock.calls.every(([url]) => String(url).includes('/api/tags'))).toBe(
-      true,
-    );
+    expect(
+      fetchMock.mock.calls.every(([url]) => String(url).includes('/api/tags')),
+    ).toBe(true);
   });
 
   it('rejects with a clear, actionable message when no binary exists on an unsupported auto-download platform — never silently resolves', async () => {
@@ -189,7 +212,10 @@ describe('Ollama install state machine', () => {
 
   it('status() reports installed:true once a binary is found, independent of whether it is serving', async () => {
     setPlatform('darwin');
-    execFileState.impl = async () => ({ stdout: '/opt/homebrew/bin/ollama\n', stderr: '' });
+    execFileState.impl = async () => ({
+      stdout: '/opt/homebrew/bin/ollama\n',
+      stderr: '',
+    });
     existsSyncState.paths.add('/opt/homebrew/bin/ollama');
     fetchMock.mockImplementation(async () => {
       throw new Error('ECONNREFUSED');

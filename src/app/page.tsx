@@ -1,13 +1,13 @@
-import ChatWindow from '@/components/ChatWindow';
+import HomeViews from '@/components/HomeViews';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Chat - Simplicity',
-  description: 'Chat with the internet, chat with Simplicity.',
+  title: 'Chat - Curiocity',
+  description: 'Chat with the internet, chat with Curiocity.',
 };
 
 const Home = () => {
-  return <ChatWindow />;
+  return <HomeViews />;
 };
 
 export default Home;

@@ -3,7 +3,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { File } from 'lucide-react';
 import { Chunk } from '@/lib/types';
-import { faviconUrl, getDomainLabel, getHost, isFileSource } from './sourceUtils';
+import {
+  faviconUrl,
+  getDomainLabel,
+  getHost,
+  isFileSource,
+} from './sourceUtils';
 
 /** Full source cards for the "Links" tab: favicon, domain, title, snippet. */
 const LinksPanel = ({ sources }: { sources: Chunk[] }) => {

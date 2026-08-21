@@ -35,7 +35,7 @@ const topics: { key: string; display: string }[] = [
   },
 ];
 
-const Page = () => {
+const DiscoverView = () => {
   const [discover, setDiscover] = useState<Discover[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTopic, setActiveTopic] = useState<string>(topics[0].key);
@@ -266,4 +266,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default DiscoverView;

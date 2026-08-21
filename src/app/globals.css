@@ -11,6 +11,25 @@
 }
 
 @layer base {
+  /* Palette bridge.
+   *
+   * These mirror tailwind.config.ts, which derives from
+   * src/lib/theme/palette.ts. Plain CSS cannot import that module, so the
+   * values are surfaced once here as custom properties and referenced below,
+   * rather than being re-typed at each of the nine scrollbar rules that used
+   * to hardcode them. */
+  :root {
+    --scrollbar-thumb: theme('colors.light.200');
+    --scrollbar-thumb-hover: theme('colors.light.300');
+  }
+
+  :root.dark,
+  html.dark,
+  body.dark {
+    --scrollbar-thumb: theme('colors.dark.200');
+    --scrollbar-thumb-hover: theme('colors.dark.300');
+  }
+
   .overflow-hidden-scrollable {
     -ms-overflow-style: none;
   }
@@ -21,7 +40,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #e8edf1 transparent; /* light-200 */
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
 
   *::-webkit-scrollbar {
@@ -34,45 +53,13 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background: #e8edf1; /* light-200 */
+    background: var(--scrollbar-thumb);
     border-radius: 3px;
     transition: background 0.2s ease;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: #d0d7de; /* light-300 */
-  }
-
-  @media (prefers-color-scheme: dark) {
-    * {
-      scrollbar-color: #21262d transparent; /* dark-200 */
-    }
-
-    *::-webkit-scrollbar-thumb {
-      background: #21262d; /* dark-200 */
-    }
-
-    *::-webkit-scrollbar-thumb:hover {
-      background: #30363d; /* dark-300 */
-    }
-  }
-
-  :root.dark *,
-  html.dark *,
-  body.dark * {
-    scrollbar-color: #21262d transparent; /* dark-200 */
-  }
-
-  :root.dark *::-webkit-scrollbar-thumb,
-  html.dark *::-webkit-scrollbar-thumb,
-  body.dark *::-webkit-scrollbar-thumb {
-    background: #21262d; /* dark-200 */
-  }
-
-  :root.dark *::-webkit-scrollbar-thumb:hover,
-  html.dark *::-webkit-scrollbar-thumb:hover,
-  body.dark *::-webkit-scrollbar-thumb:hover {
-    background: #30363d; /* dark-300 */
+    background: var(--scrollbar-thumb-hover);
   }
 
   html {
@@ -90,7 +77,13 @@
   }
 }
 
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
+/* iOS zooms the viewport when a focused field's text is under 16px. This
+ * guard prevents that, but it was previously unscoped: it applied to every
+ * select, textarea and input on every WebKit browser including desktop
+ * Safari, overriding the canvas toolbar's !text-xs and the assist composer's
+ * text-[12.5px]. Restricting it to touch pointers keeps the iOS fix and stops
+ * it reaching the desktop editor chrome. */
+@media screen and (-webkit-min-device-pixel-ratio: 0) and (pointer: coarse) {
   select,
   textarea,
   input {

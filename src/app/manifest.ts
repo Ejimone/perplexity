@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Simplicity - Direct Your Curiosity',
-    short_name: 'Simplicity',
-    description: 'Simplicity is an AI powered answering engine.',
+    name: 'Curiocity - Direct Your Curiosity',
+    short_name: 'Curiocity',
+    description: 'Curiocity is an AI powered answering engine.',
     start_url: '/',
     display: 'standalone',
     background_color: '#0a0a0a',

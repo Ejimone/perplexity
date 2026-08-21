@@ -36,7 +36,11 @@ export const MODEL_PRICING: Record<string, ModelPricing> = {
     outputPerMTok: 2.0,
     cachedInputPerMTok: 0.025,
   },
-  'gpt-4o': { inputPerMTok: 2.5, outputPerMTok: 10.0, cachedInputPerMTok: 1.25 },
+  'gpt-4o': {
+    inputPerMTok: 2.5,
+    outputPerMTok: 10.0,
+    cachedInputPerMTok: 1.25,
+  },
   'gpt-4o-mini': {
     inputPerMTok: 0.15,
     outputPerMTok: 0.6,
@@ -148,7 +152,11 @@ export function resolvePricingKey(
 /** Returns USD cost, or null when the model key is unpriced (caller shows Free/—). */
 export function estimateCostUSD(
   pricingKey: string | null,
-  usage: { inputTokens: number; outputTokens: number; cachedInputTokens?: number },
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    cachedInputTokens?: number;
+  },
 ): number | null {
   if (!pricingKey) return null;
   const p = MODEL_PRICING[pricingKey];

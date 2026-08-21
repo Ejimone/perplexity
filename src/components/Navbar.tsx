@@ -282,7 +282,7 @@ const Navbar = () => {
                         className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-xl hover:bg-light-secondary dark:hover:bg-dark-secondary transition-colors duration-200"
                         onClick={() => exportAsMarkdown(sections, title || '')}
                       >
-                        <FileText size={16} className="text-[#24A0ED]" />
+                        <FileText size={16} className="text-accent" />
                         <div>
                           <p className="text-sm font-medium text-black dark:text-white">
                             Markdown
@@ -296,7 +296,7 @@ const Navbar = () => {
                         className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-xl hover:bg-light-secondary dark:hover:bg-dark-secondary transition-colors duration-200"
                         onClick={() => exportAsPDF(sections, title || '')}
                       >
-                        <FileDown size={16} className="text-[#24A0ED]" />
+                        <FileDown size={16} className="text-accent" />
                         <div>
                           <p className="text-sm font-medium text-black dark:text-white">
                             PDF

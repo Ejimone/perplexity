@@ -8,7 +8,10 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { toast } from 'sonner';
 import { Chunk } from '@/lib/types';
-import { hasMarkdownTable, markdownTablesToCsv } from '@/lib/utils/markdownTables';
+import {
+  hasMarkdownTable,
+  markdownTablesToCsv,
+} from '@/lib/utils/markdownTables';
 
 /* Clean, self-contained print stylesheet for the PDF export — no chrome
    (nav, composer, sidebar) is present at all since only the answer's own
@@ -137,7 +140,9 @@ const Download = ({
     const printWindow = window.open('', '_blank');
 
     if (!printWindow) {
-      toast.error('Could not open the print window — check your popup blocker.');
+      toast.error(
+        'Could not open the print window — check your popup blocker.',
+      );
       return;
     }
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import ModelRegistry from '@/lib/models/registry';
-import { getSearxngURL } from '@/lib/config/serverRegistry';
+import { getSearxngURL, getSerperApiKey } from '@/lib/config/serverRegistry';
 import { CATALOG_ROWS, availableRows, ResolvedRow } from '@/lib/models/catalog';
 import { ModelWithProvider, MinimalProvider } from '@/lib/models/types';
 import SearchAgent from '@/lib/agents/search';
@@ -199,11 +199,11 @@ export const POST = async (req: Request) => {
        ERR_INVALID_URL on an empty base URL, each query swallows it
        individually, and the user gets a generic failure with no clue that
        search was never configured. */
-    if (!getSearxngURL()) {
+    if (!getSearxngURL() && !getSerperApiKey()) {
       return Response.json(
         {
           message:
-            'Search is not configured, so there is nothing to base an answer on. Set a SearXNG URL in Settings (or the SEARXNG_API_URL environment variable) and try again.',
+            'Search is not configured, so there is nothing to base an answer on. Add a Serper API key (serper.dev) or a SearXNG URL in Settings, then try again.',
         },
         { status: 503 },
       );
@@ -288,17 +288,19 @@ export const POST = async (req: Request) => {
     let councilMembers: CouncilMemberSpec[] = [];
 
     if (isCouncil && chairPick) {
-      const [memberLLMs, chairLLM, embeddingModel, utility] = await Promise.all([
-        Promise.all(
-          pickedRows.map((r) => registry.loadChatModel(r.providerId, r.key)),
-        ),
-        registry.loadChatModel(chairPick.providerId, chairPick.key),
-        registry.loadEmbeddingModel(
-          body.embeddingModel.providerId,
-          body.embeddingModel.key,
-        ),
-        resolveUtilityLLM(registry, providers, chairPick),
-      ]);
+      const [memberLLMs, chairLLM, embeddingModel, utility] = await Promise.all(
+        [
+          Promise.all(
+            pickedRows.map((r) => registry.loadChatModel(r.providerId, r.key)),
+          ),
+          registry.loadChatModel(chairPick.providerId, chairPick.key),
+          registry.loadEmbeddingModel(
+            body.embeddingModel.providerId,
+            body.embeddingModel.key,
+          ),
+          resolveUtilityLLM(registry, providers, chairPick),
+        ],
+      );
 
       councilMembers = pickedRows.map((r, i) => {
         const providerType = typeOf(r.providerId);

@@ -65,7 +65,11 @@ export const extractMarkdownTables = (markdown: string): string[][][] => {
       const rows: string[][] = [splitRow(headerLine)];
 
       let j = i + 2;
-      while (j < lines.length && lines[j].trim() !== '' && isTableRow(lines[j])) {
+      while (
+        j < lines.length &&
+        lines[j].trim() !== '' &&
+        isTableRow(lines[j])
+      ) {
         rows.push(splitRow(lines[j]));
         j++;
       }
@@ -95,6 +99,4 @@ const tableToCsv = (rows: string[][]): string =>
  * blank line between — one downloadable file covering every table in the
  * answer. */
 export const markdownTablesToCsv = (markdown: string): string =>
-  extractMarkdownTables(markdown)
-    .map(tableToCsv)
-    .join('\n\n');
+  extractMarkdownTables(markdown).map(tableToCsv).join('\n\n');

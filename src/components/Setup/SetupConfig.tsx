@@ -80,8 +80,9 @@ const SetupConfig = ({
        keyword order. Nothing registers Transformers on a fresh install, so
        without that fallback there'd be no embedding model at all. */
     let embeddingProvider =
-      providers.find((p) => p.type === 'ollama' && p.embeddingModels.length > 0) ??
-      providers.find((p) => p.embeddingModels.length > 0);
+      providers.find(
+        (p) => p.type === 'ollama' && p.embeddingModels.length > 0,
+      ) ?? providers.find((p) => p.embeddingModels.length > 0);
 
     if (!embeddingProvider) {
       try {
@@ -215,7 +216,7 @@ const SetupConfig = ({
             }}
             onClick={handleFinish}
             disabled={!hasProviders || isLoading || isFinishing}
-            className="flex flex-row items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-lg bg-[#24A0ED] text-white hover:bg-[#1e8fd1] active:scale-95 transition-all duration-200 font-medium text-xs sm:text-sm disabled:bg-light-200 dark:disabled:bg-dark-200 disabled:text-black/40 dark:disabled:text-white/40 disabled:cursor-not-allowed disabled:active:scale-100"
+            className="flex flex-row items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-lg bg-accent text-white hover:bg-accent-hover active:scale-95 transition-all duration-200 font-medium text-xs sm:text-sm disabled:bg-light-200 dark:disabled:bg-dark-200 disabled:text-black/40 dark:disabled:text-white/40 disabled:cursor-not-allowed disabled:active:scale-100"
           >
             <span>{isFinishing ? 'Finishing…' : 'Start searching'}</span>
             <Check className="w-4 h-4 md:w-[18px] md:h-[18px]" />

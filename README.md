@@ -1,4 +1,4 @@
-# Simplicity
+# Curiocity
 
 **A free, private, Perplexity-style answer engine that runs entirely on your computer — now with a built-in code canvas.** No account. No subscription. Your searches never leave your machine — a local search engine does the searching, and answers come from your own AI models: free local ones, your existing Claude subscription, or your own API keys.
 
@@ -6,16 +6,16 @@
 
 | Platform                             | Download                                                                                                                           | Status                                                                                                                                                                                    |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **macOS** (Apple Silicon, macOS 13+) | [Simplicity-mac-arm64.dmg](https://github.com/Blueturboguy07/Simplicity/releases/latest/download/Simplicity-mac-arm64.dmg)         | Signed & notarized by Apple · opens clean · tested                                                                                                                                        |
-| **Windows** (10/11, 64-bit)          | [Simplicity-Setup-Windows.exe](https://github.com/Blueturboguy07/Simplicity/releases/latest/download/Simplicity-Setup-Windows.exe) | **Beta** — built natively on Windows CI; install and uninstall are machine-tested on every build. If it misbehaves, [open an issue](https://github.com/Blueturboguy07/Simplicity/issues). |
+| **macOS** (Apple Silicon, macOS 13+) | [Curiocity-mac-arm64.dmg](https://github.com/Ejimone/perplexity/releases/latest/download/Curiocity-mac-arm64.dmg)         | Signed & notarized by Apple · opens clean · tested                                                                                                                                        |
+| **Windows** (10/11, 64-bit)          | [Curiocity-Setup-Windows.exe](https://github.com/Ejimone/perplexity/releases/latest/download/Curiocity-Setup-Windows.exe) | **Beta** — built natively on Windows CI; install and uninstall are machine-tested on every build. If it misbehaves, [open an issue](https://github.com/Ejimone/perplexity/issues). |
 
-### 🌐 Try the code canvas without installing anything
+### 🌐 Try it in your browser
 
-**[simplicity-desktop.vercel.app](https://simplicity-desktop.vercel.app)**
+**[curiocity-desktop.vercel.app](https://curiocity-desktop.vercel.app)**
 
-The code canvas runs in your browser — write JavaScript or Python, run it, see the output, and ask the AI for help. Nothing to download and nothing to set up.
+Ask a question and get a cited answer, browse Discover, or open the canvas and run JavaScript and Python. Nothing to download and nothing to set up.
 
-This web version is the canvas only. Search, answers and chat history need the local search engine that ships with the desktop app, so those live in the download above.
+The hosted version is a demo, and it is not the private one. It searches through a third-party search service instead of the local engine, and it keeps nothing between visits — so Library only ever shows the threads from the session you are in. The download above is the real thing: it runs its own search engine on your computer, and your searches and chats stay there.
 
 ### First-open notes
 
@@ -25,17 +25,17 @@ This web version is the canvas only. Search, answers and chat history need the l
 
 ### First launch
 
-The first run downloads the local search engine (~150 MB, one time). If you want free local AI models, the setup screen installs [Ollama](https://ollama.com) for you with one click on macOS (Windows: install Ollama yourself from [ollama.com/download](https://ollama.com/download), then click Install again — Simplicity picks it up automatically) — or plug in an API key (OpenAI, Anthropic, Google, Groq, xAI) or connect your existing Claude subscription for free frontier-model answers.
+The first run downloads the local search engine (~150 MB, one time). If you want free local AI models, the setup screen installs [Ollama](https://ollama.com) for you with one click on macOS (Windows: install Ollama yourself from [ollama.com/download](https://ollama.com/download), then click Install again — Curiocity picks it up automatically) — or plug in an API key (OpenAI, Anthropic, Google, Groq, xAI) or connect your existing Claude subscription for free frontier-model answers.
 
 ### Uninstalling
 
-See [UNINSTALL.md](UNINSTALL.md) for exactly what Simplicity writes to disk and how to remove all of it — on macOS, `./scripts/uninstall.sh` does it in one step.
+See [UNINSTALL.md](UNINSTALL.md) for exactly what Curiocity writes to disk and how to remove all of it — on macOS, `./scripts/uninstall.sh` does it in one step.
 
 ---
 
 ## ⚠️ Starting point, not a finished product
 
-This is an early beta — a starting point. The core loop (search → sources → cited answer) is solid and tested, but edges are rough: some surfaces are still being brought to parity, and things will change fast. Use it, break it, [tell us what broke](https://github.com/Blueturboguy07/Simplicity/issues).
+This is an early beta — a starting point. The core loop (search → sources → cited answer) is solid and tested, but edges are rough: some surfaces are still being brought to parity, and things will change fast. Use it, break it, [tell us what broke](https://github.com/Ejimone/perplexity/issues).
 
 ## What it does
 
@@ -44,7 +44,6 @@ This is an early beta — a starting point. The core loop (search → sources �
 - **Deep research** — a capped multi-round research loop that scrapes and reads pages, then writes a long-form sectioned report.
 - **Model council** — up to 3 models from different vendors answer the same question in parallel from the same sources; a chair model compares them and calls out where they agree and disagree.
 - **Code canvas** — write and run code right inside the app, with AI help on tap. [More below.](#-code-canvas)
-- **Price per query** — every answer shows exactly what it cost you ("$0.0042 · 12.4k tokens", per-model breakdown). Local models and Claude-subscription answers show **Free**.
 - **Your models, your choice** — pick per message: local Ollama (free), your Claude plan (free), or GPT-5.1 / Gemini 2.5 Pro / Claude Opus 4.8 / Grok on your keys. Nothing is locked.
 - **Incognito threads** — flip the lock and the thread is never written to disk.
 - **Export** — Markdown, PDF, or CSV of any answer.
@@ -54,7 +53,7 @@ This is an early beta — a starting point. The core loop (search → sources �
 
 ## 🧑‍💻 Code canvas
 
-A proper little code editor built into Simplicity — **Canvas** in the sidebar. Write something, press **⌘↵**, and see what it does.
+A proper little code editor built into Curiocity — **Canvas** in the sidebar. Write something, press **⌘↵**, and see what it does.
 
 ### Write
 
@@ -74,7 +73,7 @@ A proper little code editor built into Simplicity — **Canvas** in the sidebar.
 
 ### Ask
 
-- **Help with what's in front of you** — press **⌘I** and Simplicity sends your code, whatever you've selected, and the most recent error to the model. The answer streams into a panel beside the editor.
+- **Help with what's in front of you** — press **⌘I** and Curiocity sends your code, whatever you've selected, and the most recent error to the model. The answer streams into a panel beside the editor.
 - **Just ask** — there's a box at the bottom of that panel for questions in your own words.
 - **You stay in control** — suggestions are _never_ applied for you. Every block of code the model writes gets **Insert** and **Replace** buttons, and nothing changes in your file until you press one.
 
@@ -96,7 +95,7 @@ The sidebar page is always there. The floating panel and the floating bar are of
 
 ```bash
 git clone https://github.com/Ejimone/perplexity.git
-cd Simplicity
+cd Curiocity
 yarn install
 yarn dist:mac   # or: yarn dist:win
 ```

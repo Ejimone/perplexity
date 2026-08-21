@@ -56,10 +56,9 @@ src/app/api/uploads
 src/app/api/videos
 src/app/api/weather
 
-# Pages that need the local search engine, plus the two Next turns into an
-# extra pair of functions each.
-src/app/c
-src/app/discover
-src/app/library
+# /c/[chatId], /discover and /library used to be listed here: they were real
+# routes that the hosted build could not afford. They are client-side views on
+# `/` now (see src/lib/hooks/useView.tsx), so the route files no longer exist
+# in either build and there is nothing left to exclude.
 src/app/manifest.ts
 src/app/favicon.ico

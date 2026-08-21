@@ -231,7 +231,11 @@ class SearchAgent {
        to the same block the user is already reading means it survives page
        reloads and history the same way the answer itself does, unlike a
        toast. */
-    if (!input.config.signal?.aborted && finishReason === 'length' && answerBlock) {
+    if (
+      !input.config.signal?.aborted &&
+      finishReason === 'length' &&
+      answerBlock
+    ) {
       answerBlock.data +=
         '\n\n---\n*Response cut off — this model reached its context or output limit before finishing. Start a new chat, or switch to a model with a larger context window, to get the rest of the answer.*';
       session.updateBlock(answerBlock.id, [

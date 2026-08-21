@@ -28,7 +28,9 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 const LOADERS: Record<string, () => Promise<Record<string, unknown>>> = {
   chat: () => import('@/lib/api/chat'),
+  chats: () => import('@/lib/api/chats'),
   config: () => import('@/lib/api/config'),
+  discover: () => import('@/lib/api/discover'),
   providers: () => import('@/lib/api/providers'),
   'canvas/assist': () => import('@/lib/api/canvasAssist'),
   'canvas/buffers': () => import('@/lib/api/canvasBuffers'),
@@ -43,7 +45,9 @@ const dispatch = async (
   const segments = (await ctx.params).path ?? [];
 
   try {
-    /* The only endpoint carrying a dynamic segment of its own. */
+    /* Endpoints carrying a dynamic segment of their own. The catch-all has
+       already split the path, so these call the id-taking implementations
+       directly rather than going through the method lookup below. */
     if (
       method === 'GET' &&
       segments.length === 3 &&
@@ -52,6 +56,15 @@ const dispatch = async (
     ) {
       const { serveSandbox } = await import('@/lib/api/canvasSandbox');
       return serveSandbox(req, segments[2]);
+    }
+
+    if (segments.length === 2 && segments[0] === 'chats') {
+      const { getChatById, deleteChatById } = await import('@/lib/api/chats');
+
+      if (method === 'GET') return getChatById(segments[1]);
+      if (method === 'DELETE') return deleteChatById(segments[1]);
+
+      return Response.json({ message: 'Method not allowed' }, { status: 405 });
     }
 
     const load = LOADERS[segments.join('/')];
@@ -85,4 +98,5 @@ type Ctx = { params: Promise<{ path?: string[] }> };
 export const GET = (req: NextRequest, ctx: Ctx) => dispatch('GET', req, ctx);
 export const POST = (req: NextRequest, ctx: Ctx) => dispatch('POST', req, ctx);
 export const PUT = (req: NextRequest, ctx: Ctx) => dispatch('PUT', req, ctx);
-export const DELETE = (req: NextRequest, ctx: Ctx) => dispatch('DELETE', req, ctx);
+export const DELETE = (req: NextRequest, ctx: Ctx) =>
+  dispatch('DELETE', req, ctx);

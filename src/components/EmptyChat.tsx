@@ -7,7 +7,6 @@ import { File } from './ChatWindow';
 import Link from 'next/link';
 import WeatherWidget from './WeatherWidget';
 import NewsArticleWidget from './NewsArticleWidget';
-import SettingsButtonMobile from '@/components/Settings/SettingsButtonMobile';
 import IncognitoToggle from '@/components/IncognitoToggle';
 import {
   getShowNewsWidget,
@@ -44,11 +43,10 @@ const EmptyChat = () => {
 
   return (
     <div className="relative">
-      <div className="absolute w-full flex flex-row items-center justify-between px-5 mt-5">
+      <div className="absolute w-full flex flex-row items-center justify-start px-5 mt-5">
         {/* Perplexity ground truth: a circular lock button top-left of the
             composer toggles incognito for this thread only. */}
         <IncognitoToggle />
-        <SettingsButtonMobile />
       </div>
       <div className="flex flex-col items-center justify-center min-h-screen max-w-screen-sm mx-auto p-2 space-y-4">
         <div className="flex flex-col items-center justify-center w-full space-y-8">

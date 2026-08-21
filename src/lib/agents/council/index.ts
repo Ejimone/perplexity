@@ -202,7 +202,10 @@ class CouncilAgent {
         providerType: m.providerType,
         key: m.key,
       })),
-      { providerType: input.config.chairProviderType, key: input.config.chairKey },
+      {
+        providerType: input.config.chairProviderType,
+        key: input.config.chairKey,
+      },
     );
 
     session.emitBlock({
@@ -316,7 +319,10 @@ class CouncilAgent {
     };
 
     if (input.config.signal?.aborted) {
-      patchCouncil({ chairStatus: 'skipped', chairSkippedReason: 'Cancelled.' });
+      patchCouncil({
+        chairStatus: 'skipped',
+        chairSkippedReason: 'Cancelled.',
+      });
     } else if (successfulMembers.length === 0) {
       /* All members failed — degrade like SearchAgent's own "no results"
          backstop: say so plainly instead of leaving a blank answer. */

@@ -94,7 +94,10 @@ const ModelProvider = ({
             {modelProvider.name}
           </p>
         </div>
-        <DeleteProvider modelProvider={modelProvider} setProviders={setProviders} />
+        <DeleteProvider
+          modelProvider={modelProvider}
+          setProviders={setProviders}
+        />
       </div>
       <div className="flex flex-col gap-y-3 px-5 py-4">
         {errorMessage && (

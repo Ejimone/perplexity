@@ -3,17 +3,18 @@ import BarShell from '@/components/Canvas/BarShell';
 import StandaloneShell from '@/components/Canvas/StandaloneShell';
 
 export const metadata = {
-  title: 'Canvas - Simplicity',
+  title: 'Canvas - Curiocity',
 };
 
 /* Deliberately does NOT render <Layout/>.
  *
  * Layout wraps its children in a centred max-w-screen-lg column, which is
  * right for an answer page and wrong for an editor — the canvas needs the full
- * viewport. Because Layout is applied per page rather than by the root layout,
- * opting out is just not importing it: no change to Layout.tsx, and no risk to
- * the chat pages that depend on its width (Chat.tsx measures that column to
- * position the composer).
+ * viewport. This used to be untrue in practice: the navigation component
+ * wrapped every page in <Layout/> itself, so the canvas really was rendered
+ * inside that column, as a <main> nested in a <main>. Nav is a sibling of the
+ * page now and each page brings its own wrapper, so opting out is once again
+ * just a matter of not importing it.
  *
  * ?surface=bar is how the desktop floating-bar window asks for the same canvas
  * with window chrome instead of page chrome. */
@@ -31,7 +32,12 @@ const CanvasPage = async ({
   if (process.env.NEXT_PUBLIC_CANVAS_ONLY === '1') return <StandaloneShell />;
 
   return (
-    <main className="h-screen overflow-hidden bg-light-primary pb-20 dark:bg-dark-primary lg:pb-0 lg:pl-[72px]">
+    /* 100dvh, not 100vh: on mobile the browser's collapsing chrome makes vh
+       taller than the visible viewport, which pushed the editor's bottom edge
+       (and the output pane with it) under the URL bar. The offsets clear the
+       fixed navigation — a bottom bar below lg, a 72px rail at and above it,
+       matching Nav's RAIL_WIDTH. */
+    <main className="h-[100dvh] overflow-hidden bg-light-primary pb-20 dark:bg-dark-primary lg:pb-0 lg:pl-[72px]">
       <Canvas surface="page" />
     </main>
   );

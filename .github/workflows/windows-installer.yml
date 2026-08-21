@@ -38,19 +38,19 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $setup = Join-Path $PWD 'release\Simplicity-Setup-Windows.exe'
+          $setup = Join-Path $PWD 'release\Curiocity-Setup-Windows.exe'
           if (!(Test-Path $setup)) { throw "installer was not produced" }
 
           Start-Process -FilePath $setup -ArgumentList '/S' -Wait
-          $dir = Join-Path $env:LOCALAPPDATA 'Programs\Simplicity'
-          if (!(Test-Path (Join-Path $dir 'Simplicity.exe'))) { throw "Simplicity.exe missing after install" }
+          $dir = Join-Path $env:LOCALAPPDATA 'Programs\Curiocity'
+          if (!(Test-Path (Join-Path $dir 'Curiocity.exe'))) { throw "Curiocity.exe missing after install" }
           $resources = Join-Path $dir 'resources\.next\standalone'
           if (!(Test-Path (Join-Path $resources 'server.js'))) { throw "standalone server missing after install" }
           $canvasWin = Get-ChildItem -Recurse -Filter '*.node' (Join-Path $resources 'node_modules') |
             Where-Object { $_.Name -match 'win32' -or $_.FullName -match 'win32' }
           if (-not $canvasWin) { throw "no win32 native modules in the bundle - cross-build regression" }
 
-          $un = Join-Path $dir 'Uninstall Simplicity.exe'
+          $un = Join-Path $dir 'Uninstall Curiocity.exe'
           if (!(Test-Path $un)) { throw "uninstaller missing after install" }
           Start-Process -FilePath $un -ArgumentList '/S' -Wait
 
@@ -58,13 +58,13 @@ jobs:
           $gone = $false
           foreach ($i in 1..12) {
             Start-Sleep -Seconds 5
-            if (!(Test-Path (Join-Path $dir 'Simplicity.exe'))) { $gone = $true; break }
+            if (!(Test-Path (Join-Path $dir 'Curiocity.exe'))) { $gone = $true; break }
           }
-          if (-not $gone) { throw "uninstaller ran but Simplicity.exe is still present" }
+          if (-not $gone) { throw "uninstaller ran but Curiocity.exe is still present" }
           Write-Host "install + uninstall both clean"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Simplicity-Setup-Windows
-          path: release/Simplicity-Setup-Windows.exe
+          name: Curiocity-Setup-Windows
+          path: release/Curiocity-Setup-Windows.exe
           if-no-files-found: error

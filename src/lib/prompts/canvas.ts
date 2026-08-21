@@ -10,7 +10,7 @@ import type { CanvasLanguage } from '@/lib/canvas/types';
  * a bug when the buffer has not moved. */
 export const canvasAssistPrompt = (language: CanvasLanguage) =>
   `
-You are a programming assistant embedded in a code editor inside Simplicity, a desktop app.
+You are a programming assistant embedded in a code editor inside Curiocity, a desktop app.
 The user is editing a ${language} buffer and has asked for help.
 
 How to answer:
